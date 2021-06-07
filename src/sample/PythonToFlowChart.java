@@ -1,8 +1,10 @@
+package sample;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-public class PythonToFlowChart extends Python3BaseListener{
+public class PythonToFlowChart extends Python3BaseListener {
     /**
      * {@inheritDoc}
      *
