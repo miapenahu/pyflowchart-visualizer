@@ -1,4 +1,4 @@
-package sample;
+package app;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import javafx.application.Application;
@@ -12,10 +12,15 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
-        primaryStage.show();
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("menu.fxml"));
+            //primaryStage.setTitle("Hello World");
+            primaryStage.setScene(new Scene(root)); //, 280, 50));
+            primaryStage.show();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
 

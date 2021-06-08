@@ -149,7 +149,7 @@ private void handleEofToken(Token curToken) {
 
 private void insertLeadingTokens(int type, int startIndex) {
     if (type != NEWLINE && type != EOF) { // (after a whitespace) The first token is visible, so We insert a NEWLINE and an INDENT token before it to raise an 'unexpected indent' error later by the parser
-        this.insertToken(0, startIndex - 1, "<inserted leading NEWLINE>" + " ".repeat(startIndex), NEWLINE, 1, 0);
+        this.insertToken(0, startIndex - 1, "<inserted leading NEWLINE>" + String.join("", Collections.nCopies(startIndex, " ")), NEWLINE, 1, 0);//" ".repeat(startIndex), NEWLINE, 1, 0);
         this.insertToken(startIndex, startIndex - 1, "<" + TEXT_INSERTED_INDENT + ", " + this.getIndentationDescription(startIndex) + ">", Python3Parser.INDENT, 1, startIndex);
         this.indentLengths.push(startIndex);
     }
