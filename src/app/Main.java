@@ -1,4 +1,8 @@
 package app;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.stage.StageStyle;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import javafx.application.Application;
@@ -9,18 +13,49 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-
+    private double xOffset;
+    private double yOffset;
     @Override
     public void start(Stage primaryStage) throws Exception{
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("menu.fxml"));
-            //primaryStage.setTitle("Hello World");
-            primaryStage.setScene(new Scene(root)); //, 280, 50));
-            primaryStage.show();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+        Parent root = FXMLLoader.load(getClass().getResource("editor.fxml"));
 
+/*        root.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = event.getSceneX();
+                yOffset = event.getSceneY();
+            }
+        });*/
+
+        root.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = primaryStage.getX() - event.getScreenX();
+                yOffset = primaryStage.getY() - event.getScreenY();
+            }
+        });
+
+        root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                primaryStage.setX(event.getScreenX() + xOffset);
+                primaryStage.setY(event.getScreenY() + yOffset);
+            }
+        });
+
+/*        root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                primaryStage.setX(event.getSceneX() - xOffset);
+                primaryStage.setY(event.getSceneY() - yOffset);
+            }
+        });*/
+
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
 
@@ -30,10 +65,11 @@ public class Main extends Application {
             // create a lexer that feeds off of input CharStream
             Python3Lexer lexer;
 
-            if (args.length>0)
+            lexer = new Python3Lexer(CharStreams.fromFileName(args[0]));
+/*            if (args.length>0)
                 lexer = new Python3Lexer(CharStreams.fromFileName(args[0]));
             else
-                lexer = new Python3Lexer(CharStreams.fromStream(System.in));
+                lexer = new Python3Lexer(CharStreams.fromStream(System.in));*/
             // create a buffer of tokens pulled from the lexer
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             // create a parser that feeds off the tokens buffer
@@ -46,7 +82,7 @@ public class Main extends Application {
             walker.walk(new PythonToFlowChart(), tree);
             System.out.println(); // print a \n after translation
         } catch (Exception e){
-            System.err.println("Error (Test): " + e);
+            //System.err.println("Error (Test): " + e);
         }
         launch(args);
     }
