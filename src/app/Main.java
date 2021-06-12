@@ -22,14 +22,6 @@ public class Main extends Application {
 /*        root.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                xOffset = event.getSceneX();
-                yOffset = event.getSceneY();
-            }
-        });*/
-
-        root.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
                 xOffset = primaryStage.getX() - event.getScreenX();
                 yOffset = primaryStage.getY() - event.getScreenY();
             }
@@ -41,20 +33,13 @@ public class Main extends Application {
                 primaryStage.setX(event.getScreenX() + xOffset);
                 primaryStage.setY(event.getScreenY() + yOffset);
             }
-        });
-
-/*        root.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                primaryStage.setX(event.getSceneX() - xOffset);
-                primaryStage.setY(event.getSceneY() - yOffset);
-            }
         });*/
 
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
         primaryStage.setScene(scene);
+        ResizeHelper.addResizeListener(primaryStage);
         primaryStage.show();
     }
 

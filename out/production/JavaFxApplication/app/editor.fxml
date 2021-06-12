@@ -13,7 +13,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="760.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
    <children>
-      <StackPane fx:id="minMenu" layoutX="10.0" layoutY="10.0" prefHeight="50.0" prefWidth="280.0" style="-fx-background-color: #291452;" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <StackPane fx:id="minMenu" prefHeight="50.0" prefWidth="280.0" style="-fx-background-color: #291452;">
          <children>
             <HBox prefHeight="61.0" prefWidth="404.0">
                <children>
@@ -56,41 +56,45 @@
                   <Font name="Courier New" size="15.0" />
                </font>
             </TextArea>
-            <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="700.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="400.0" AnchorPane.topAnchor="15.0">
+            <StackPane layoutY="15.0" prefHeight="30.0" prefWidth="350.0">
                <children>
-                  <Separator prefWidth="200.0" visible="false" />
-                  <Label minHeight="-Infinity" minWidth="-Infinity" text="ABRIR" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Label>
-                  <Separator prefWidth="200.0" visible="false" />
-                  <Label minHeight="-Infinity" minWidth="-Infinity" text="   GUARDAR" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Label>
-                  <Separator prefWidth="200.0" visible="false" />
-                  <Label minWidth="-Infinity" text="GRAFICAR" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Label>
-                  <Separator prefWidth="200.0" visible="false" />
+                  <HBox prefHeight="50.0" prefWidth="200.0">
+                     <children>
+                        <Separator prefWidth="200.0" visible="false" />
+                        <Label minHeight="-Infinity" minWidth="-Infinity" text="ABRIR" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Label>
+                        <Separator prefWidth="200.0" visible="false" />
+                        <Label minHeight="-Infinity" minWidth="-Infinity" text="   GUARDAR" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Label>
+                        <Separator prefWidth="200.0" visible="false" />
+                        <Label minWidth="-Infinity" text="GRAFICAR" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Label>
+                        <Separator prefWidth="200.0" visible="false" />
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
+            </StackPane>
             <HBox prefHeight="55.0" prefWidth="399.0" AnchorPane.bottomAnchor="640.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="400.0" AnchorPane.topAnchor="40.0">
                <children>
-                  <ImageView fitHeight="35.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" translateX="45.0">
+                  <ImageView fitHeight="35.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" translateX="42.0">
                      <image>
                         <Image url="@images/icons8_opened_folder_32px.png" />
                      </image>
