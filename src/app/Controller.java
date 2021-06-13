@@ -1,6 +1,8 @@
 package app;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -11,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -20,7 +23,7 @@ import java.util.List;
 
 public class Controller {
 
-    private FlowChart flowC = new FlowChart();
+    private FlowChart flowC = new FlowChart();;
 
     private Stage stage;
     private Stage graphics;
@@ -34,7 +37,7 @@ public class Controller {
     @FXML private AnchorPane editorPane;
     @FXML private ImageView editorArrow;
     @FXML private ImageView builderArrow;
-    @FXML private AnchorPane graphicPane;
+    @FXML private Pane graphicPane;
     @FXML private ImageView closeGraphicsButton;
     //Text fields to complement flowchart
     @FXML private TextField printTextField;
@@ -89,6 +92,24 @@ public class Controller {
         graphics.show();
     }
 
+    private void printToGraphicPane(){
+        graphicPane.getChildren().clear();
+        List<Object> flowchart = flowC.getGraphic2((int)graphicPane.getWidth(),(int)graphicPane.getHeight());
+        for (int cnt = 0; cnt < flowchart.size(); cnt++){
+            graphicPane.getChildren().add((Node)flowchart.get(cnt));
+        }
+    }
+
+    private void startListeningWH(){ //Listens to scene width an height after graphicPane is created (to draw the flowchart)
+        Scene Gscene = (Scene) closeGraphicsButton.getScene();
+        Gscene.widthProperty().addListener((obs, oldVal, newVal) -> {
+            printToGraphicPane();
+        });
+
+        Gscene.heightProperty().addListener((obs, oldVal, newVal) -> {
+        });
+    }
+
     public void onEditorButtonClicked(MouseEvent event){
         if(editorPane.isVisible()){
             editorArrow.setVisible(false);
@@ -111,76 +132,24 @@ public class Controller {
     }
 
     public void onPrintButtonClicked(MouseEvent event){
-        graphicPane.getChildren().clear();
-/*        if(writingBranch == 1){
-            flowC.addFlowElement(1,"IO","Imprimir \"" + printTextField.getText() + "\"");
-        } else if (writingBranch == 0){
-            flowC.addFlowElement(0,"IO","Imprimir \"" + printTextField.getText() + "\"");
-        } else {*/
-            flowC.addFlowElement("IO","Imprimir \"" + printTextField.getText() + "\"");
-        //}
-
-/*        List<Object> flowchart = flowC.getGraphic(graphicPane.getWidth(),graphicPane.getHeight());
-        for (int cnt = 0; cnt < flowchart.size(); cnt++){
-            graphicPane.getChildren().add((Node)flowchart.get(cnt));
-        }
-        flowchart.clear();*/
-        List<Object> flowchart = flowC.getGraphic2((int)graphicPane.getWidth(),(int)graphicPane.getHeight());
-        for (int cnt = 0; cnt < flowchart.size(); cnt++){
-            graphicPane.getChildren().add((Node)flowchart.get(cnt));
-        }
-        flowC.printFlowchart();
+        startListeningWH();
+        flowC.addFlowElement("IO","Imprimir \"" + printTextField.getText() + "\"");
+        printToGraphicPane();
     }
 
     public void onCrearVariableButtonClicked(MouseEvent event){
-        graphicPane.getChildren().clear();
-/*        if(writingBranch == 1){
-            flowC.addFlowElement(1,"Process","Crear variable \""+ crearVarField.getText() + "\"");
-        } else if (writingBranch == 0){
-            flowC.addFlowElement(0,"Process","Crear variable \""+ crearVarField.getText() + "\"");
-        } else {*/
-            flowC.addFlowElement("Process","Crear variable \""+ crearVarField.getText() + "\"");
-        //}
+        startListeningWH();
+        flowC.addFlowElement("Process","Crear variable \""+ crearVarField.getText() + "\"");
+        printToGraphicPane();;
 
-/*        List<Object> flowchart = flowC.getGraphic(graphicPane.getWidth(),graphicPane.getHeight());
-        for (int cnt = 0; cnt < flowchart.size(); cnt++){
-            graphicPane.getChildren().add((Node)flowchart.get(cnt));
-        }
-        flowchart.clear();*/
-        List<Object> flowchart = flowC.getGraphic2((int)graphicPane.getWidth(),(int)graphicPane.getHeight());
-        for (int cnt = 0; cnt < flowchart.size(); cnt++){
-            graphicPane.getChildren().add((Node)flowchart.get(cnt));
-        }
-
-        flowC.printFlowchart();
     }
 
     public void onIfButtonClicked(MouseEvent event){
-        graphicPane.getChildren().clear();
-/*        if(writingBranch == 1){
-            flowC.addFlowElement(1,"Decision","¿"+ ifField.getText() + "?");
-        } else if (writingBranch == 0){
-            flowC.addFlowElement(0,"Decision","¿"+ ifField.getText() + "?");
-        } else {*/
-            flowC.addFlowElement("Decision","¿"+ ifField.getText() + "?");
-        //}
-
-/*        List<Object> flowchart = flowC.getGraphic(graphicPane.getWidth(),graphicPane.getHeight());
-        for (int cnt = 0; cnt < flowchart.size(); cnt++){
-            graphicPane.getChildren().add((Node)flowchart.get(cnt));
-        }
-        flowchart.clear();*/
-        List<Object> flowchart = flowC.getGraphic2((int)graphicPane.getWidth(),(int)graphicPane.getHeight());
-        for (int cnt = 0; cnt < flowchart.size(); cnt++){
-            graphicPane.getChildren().add((Node)flowchart.get(cnt));
-        }
-        //openBranches++;
-        //flowC.setOpenDecisions(flowC.getOpenDecisions()+1);
+        startListeningWH();
+        flowC.addFlowElement("Decision","¿"+ ifField.getText() + "?");
+        printToGraphicPane();
         cntOpenBranches.setText(""+flowC.getOpenDecisions());
-        //writingBranch = 1; //True
-        //flowC.setWritingBranch(1); //True
         ifTrueFalseButton.setText("true");
-        flowC.printFlowchart();
     }
 
     public void onTrueFalseButtonClicked(MouseEvent event){
@@ -192,45 +161,28 @@ public class Controller {
             flowC.setWritingBranch(1); //True
             ifTrueFalseButton.setText("true");
         }
-        //flowC.printFlowchart();
     }
 
     public void onMergeButtonClicked(MouseEvent event){
         flowC.addFlowElement("Merge","");
+        printToGraphicPane();
         cntOpenBranches.setText(""+flowC.getOpenDecisions());
         if(flowC.getOpenDecisions() == 0){
             ifTrueFalseButton.setText("none");
-        }
-        flowC.printFlowchart();
-/*        openBranches--;
-        cntOpenBranches.setText(""+openBranches);
-        if(openBranches > 0){
-            writingBranch = 1;
-            ifTrueFalseButton.setText("true");
         } else {
-            writingBranch = -1;
-            ifTrueFalseButton.setText("none");
-        }*/
+            if (flowC.getWritingBranch() == 0) {
+                ifTrueFalseButton.setText("false");
+            } else if (flowC.getWritingBranch() == 1) {
+                ifTrueFalseButton.setText("true");
+            }
+        }
     }
 
     public void onWhileButtonClicked(MouseEvent event){
         graphicPane.getChildren().clear();
-/*        if(writingBranch == 1){
-            flowC.addFlowElement(1,"Loop","¿"+ ifField.getText() + "?");
-        } else if (writingBranch == 0){
-            flowC.addFlowElement(0,"Loop","¿"+ ifField.getText() + "?");
-        } else {*/
-            flowC.addFlowElement("Loop","¿"+ ifField.getText() + "?");
-        //}
-
-        //List<Object> flowchart = flowC.getGraphic(graphicPane.getWidth(),graphicPane.getHeight());
-        //for (int cnt = 0; cnt < flowchart.size(); cnt++){
-        //    graphicPane.getChildren().add((Node)flowchart.get(cnt));
-        //}
-        //openWhileBlocks++;
+        flowC.addFlowElement("Loop","¿"+ ifField.getText() + "?");
         cntOpenWhileBlocks.setText(""+flowC.getOpenLoops());
         whileTrueFalseButton.setText("true");
-        flowC.printFlowchart();
     }
 
     public void onEndBlockButtonClicked(MouseEvent event){
@@ -244,13 +196,6 @@ public class Controller {
             if(flowC.getOpenLoops() == 0){
                 whileTrueFalseButton.setText("none");
             }
-            /*
- if(openWhileBlocks > 0){
-                whileTrueFalseButton.setText("false");
-            } else {
-                whileTrueFalseButton.setText("none");
-            }*/
-
         }
     }
 
@@ -272,17 +217,8 @@ public class Controller {
     }
 
     public void onFinalButtonClicked(MouseEvent event){
-        graphicPane.getChildren().clear();
+        startListeningWH();
         flowC.addFlowElement("End","");
-/*        List<Object> flowchart = flowC.getGraphic(graphicPane.getWidth(),graphicPane.getHeight());
-        for (int cnt = 0; cnt < flowchart.size(); cnt++){
-            graphicPane.getChildren().add((Node)flowchart.get(cnt));
-        }
-        flowchart.clear();*/
-        List<Object>flowchart = flowC.getGraphic2((int)graphicPane.getWidth(),(int)graphicPane.getHeight());
-        for (int cnt = 0; cnt < flowchart.size(); cnt++){
-            graphicPane.getChildren().add((Node)flowchart.get(cnt));
-        }
-        flowC.printFlowchart();
+        printToGraphicPane();
     }
 }

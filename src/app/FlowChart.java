@@ -52,7 +52,7 @@ public class FlowChart {
         this.openLoops = openLoops;
     }
 
-    public void printFlowchart() {
+    public void printFlowchartTrace() {
         System.out.println("---------- Comienzo FLowChart ------------");
         for(int i = 0; i < flowchart.size();i++){
             System.out.println();
@@ -71,6 +71,24 @@ public class FlowChart {
     }
 
     public void addFlowElement(String etype, String text){
+        if(etype.equals("Merge")){
+            if(this.openDecisions > 1){
+                this.openDecisions = this.openDecisions - 1;
+                this.setWritingBranch(1); //True
+            } else if(this.openDecisions == 1){
+                this.openDecisions = this.openDecisions - 1;
+                this.setWritingBranch(-1); //None
+            }
+        }
+        if(etype.equals("EndLoop")){
+            if(this.openLoops > 1){
+                this.openLoops = this.openLoops - 1;
+                this.setWritingBlock(1); //True
+            } else if(this.openLoops == 1){
+                this.openLoops = this.openLoops - 1;
+                this.setWritingBlock(-1); //None
+            }
+        }
         FlowElement elem = new FlowElement(etype,text,writingBranch,writingBlock);
         this.flowchart.add(elem);
         if(etype.equals("Decision")){
@@ -80,22 +98,7 @@ public class FlowChart {
             this.openLoops = this.openLoops + 1;
             this.setWritingBlock(1); //True
         }
-        if(etype.equals("Merge")){
-            this.openDecisions = this.openDecisions - 1;
-            if(openDecisions > 0){
-                this.setWritingBranch(1); //True
-            } else{
-                this.setWritingBranch(-1); //None
-            }
-        }
-        if(etype.equals("EndLoop")){
-            this.openLoops = this.openLoops - 1;
-            if(openLoops > 0){
-                this.setWritingBlock(1); //True
-            } else {
-                this.setWritingBlock(-1); //None
-            }
-        }
+
     }
 
 /*    public void addFlowElement(String etype, String text,int branch, int block){  //, int line){
@@ -151,8 +154,60 @@ public class FlowChart {
         MoveTo point2 = new MoveTo(actualX-5,actualY-5);
         MoveTo point3 = new MoveTo(actualX+5,actualY-5);
         LineTo line = new LineTo(actualX,actualY);
-        return new Path(point1,line,point2,line,point3,line);
+        Path ans = new Path(point1,line,point2,line,point3,line);
+        ans.setBlendMode(BlendMode.SRC_ATOP);
+        return ans;
     }
+
+    private Shape drawDecisionLine(int actualX, int actualY, int YSpaceObj, int destX){
+        MoveTo point1 = new MoveTo(actualX,actualY - YSpaceObj);
+        LineTo line1 = new LineTo(actualX,actualY - YSpaceObj/2);
+        LineTo line2 = new LineTo(destX,actualY - YSpaceObj/2);
+        MoveTo point2 = new MoveTo(destX-5 ,actualY-5);
+        MoveTo point3 = new MoveTo(destX+5,actualY-5);
+        LineTo lineEnd = new LineTo(destX,actualY);
+        Path ans = new Path(point1,line1,line2,lineEnd,point2,lineEnd,point3,lineEnd);
+        ans.setBlendMode(BlendMode.SRC_ATOP);
+        return ans;
+    }
+
+    private Shape drawBranchesLine(int initDestXY1[], int initDestXY2[]){
+        MoveTo point1 = new MoveTo(initDestXY1[0],initDestXY1[1]);
+        LineTo line1 = new LineTo(initDestXY1[2],initDestXY1[1]);
+        LineTo line2 = new LineTo(initDestXY1[2],initDestXY1[3]);
+        MoveTo point2 = new MoveTo(initDestXY2[0],initDestXY2[1]);
+        LineTo line3 = new LineTo(initDestXY2[2],initDestXY2[1]);
+        LineTo line4 = new LineTo(initDestXY2[2],initDestXY2[3]);
+        Path ans = new Path(point1,line1,line2,point2,line3,line4);
+        ans.setBlendMode(BlendMode.SRC_ATOP);
+        return ans;
+    }
+
+    private Shape drawMergeLine(int actualX1,int actualY1, int actualX2, int actualY2, int YSpaceObj,int destX){
+/*        MoveTo point1 = new MoveTo(initX1,actualY - YSpaceObj);
+        LineTo line1 = new LineTo(initX1,actualY - YSpaceObj/2);
+        MoveTo point2 = new MoveTo(initX2,actualY - YSpaceObj);
+        LineTo line2 = new LineTo(initX2,actualY - YSpaceObj/2);
+        MoveTo point3 = new MoveTo(destX,actualY - YSpaceObj/2);
+        LineTo line3 = new LineTo(initX1,actualY - YSpaceObj/2);
+        LineTo line4 = new LineTo(initX2,actualY - YSpaceObj/2);
+        LineTo line5 = new LineTo(destX,actualY);
+        Path ans = new Path(point1,line1,point2,line2,point3,line3,point3,line4,point3,line5);*/
+        int maxY;
+        if(actualY1 < actualY2){
+            maxY = actualY2;
+        } else{
+            maxY = actualY1;
+        }
+        MoveTo point1 = new MoveTo(actualX1,actualY1 - YSpaceObj);
+        LineTo line1 = new LineTo(actualX1,maxY - YSpaceObj/2);
+        LineTo line2 = new LineTo(actualX2,maxY - YSpaceObj/2);
+        LineTo line3 = new LineTo(actualX2,actualY2 - YSpaceObj);
+        Path ans = new Path(point1,line1,line2,line3);
+        ans.setBlendMode(BlendMode.SRC_ATOP);
+        return ans;
+    }
+
 
     private Shape drawParallelogram(int actualX, int actualY, int widthObj, int heightObj, int inclination){
         MoveTo point1 = new MoveTo(actualX - widthObj/2 + inclination,actualY);
@@ -250,18 +305,54 @@ public class FlowChart {
         this.computeSplits();
         List<Integer> results = new ArrayList<Integer>();
         int spc = XSpaceObj + objw;
-        int border = (int)(w - (spc*(this.splitPoints.size()+1)));
+        int border = (int)(w - (spc*(this.splitPoints.size()+1)))/2;
 
         for(int i = 0;i < this.splitPoints.size();i++){
-            results.add(border + (i*spc));
+            results.add(border + ((i+1)*spc));
         }
         //System.out.println("Minimum splitPoints: "+Collections.min(this.splitPoints));
         return results;
     }
 
+    public int[] getConditionalLayout(int node,List<Integer> xlay, int actualXlay, int spc){
+        int ans[] = new int[4];
+        int cntMerge = 0;
+        int maxIndex = 0;
+        List<Integer> sPoints = new ArrayList<Integer>(this.splitPoints);
+        for(int i = 0;i < node;i++){
+            if(this.flowchart.get(i).getElementType().equals("Merge")){
+                cntMerge++;
+            }
+        }
+        if(xlay.size() > 0){
+            ans[0] = xlay.get(actualXlay) - (spc/2);
+            ans[1] = xlay.get(actualXlay) + (spc/2);
+            ans[2] = 0; //Num Merges on Left
+            ans[3] = 0; //Num Merges on Right
+            maxIndex = sPoints.indexOf(Collections.max(sPoints));
+            sPoints.remove(maxIndex);
+            for(int j = 0;j < cntMerge;j++){
+                if(sPoints.indexOf(Collections.max(sPoints)) >= maxIndex){  //Merge on Right
+                    ans[0] = ans[0] +(spc/2);
+                    ans[1] = xlay.get(this.splitPoints.indexOf(Collections.max(sPoints))) + (spc/2);
+                    ans[3]++;
+                } else { //Merge on Left
+                    ans[0] = xlay.get(this.splitPoints.indexOf(Collections.max(sPoints))) - (spc/2);
+                    ans[1] = ans[1] -(spc/2);
+                    ans[2]++;
+                }
+                maxIndex = sPoints.indexOf(Collections.max(sPoints));
+                sPoints.remove(maxIndex);
+            }
+        }
+
+        return ans;
+    }
+
     public List<Object> getGraphic2(int w, int h){
-        int actualY = 0, actualX, widthObj = 120, heightObj = 50, YSpaceObj = 25, XSpaceObj = 25;
-        int fontSize = 20, actualXlay = -1, initXlay = -1;
+        int actualY = 0, actualX, widthObj = 150, heightObj = 50, YSpaceObj = 25, XSpaceObj = 25;
+        int fontSize = 20, actualXlay = -1, initXlay = -1, spc = XSpaceObj + widthObj;
+        boolean flagMerge = false;
         List<Object> elements = new ArrayList<Object>();
         List<Integer> xlay = getXLayout(w,widthObj);
         int ylay[] = new int[xlay.size()+2]; //n+1 spaces for n splits, plus initalYlayout in last position
@@ -271,6 +362,7 @@ public class FlowChart {
             initXlay = this.splitPoints.indexOf(Collections.min(this.splitPoints));
             actualX = xlay.get(initXlay);
         }
+        widthObj = 120;
         ylay[xlay.size()+1] = YSpaceObj;
         actualY = ylay[xlay.size()+1];
         Ellipse start = new Ellipse(actualX,actualY + heightObj/2,widthObj/2,heightObj/2);
@@ -288,24 +380,35 @@ public class FlowChart {
         //ylay[actualXlay] = actualY + heightObj + YSpaceObj;
         int finalActualY = actualY;
         ylay = Arrays.stream(ylay).map(i -> finalActualY + heightObj + YSpaceObj).toArray();
-
+        System.out.println("xlay: "+ xlay.toString()+",ylay: "+Arrays.toString(ylay));
         for(int i = 1; i < this.getLength(); i++){
             //elements.add(drawDownLine(actualX,actualY,spaceObj));
+            System.out.print("xlay:"+ xlay.toString()+",ylay:"+Arrays.toString(ylay));
             FlowElement elem = this.flowchart.get(i);
+            System.out.print(",branch: "+elem.getBranch()+",block: "+elem.getBlock());
             if(elem.getElementType().equals("Process")){
                 if(elem.getBranch() != -1){
+                    int clay[] = getConditionalLayout(i,xlay,actualXlay,spc);
                     if(elem.getBranch() == 1){
-                        actualX = xlay.get(actualXlay) - (XSpaceObj + widthObj)/2;
-                        actualY = ylay[actualXlay];
+                        //actualX = xlay.get(actualXlay) - (XSpaceObj + widthObj)/2;
+                        actualX = clay[0];
+                        actualY = ylay[actualXlay - clay[2]];
                     } else{
-                        actualX = xlay.get(actualXlay) + (XSpaceObj + widthObj)/2;
-                        actualY = ylay[actualXlay+1];
+                        //actualX = xlay.get(actualXlay) + (XSpaceObj + widthObj)/2;
+                        actualX = clay[1];
+                        actualY = ylay[actualXlay+1 + clay[3]];
                     }
                 } else {
                     if(xlay.size() > 0) {
                         actualX = xlay.get(initXlay);
                     }
                     actualY = ylay[xlay.size() + 1];
+                }
+                if(flagMerge){
+                    flagMerge = false;
+                    elements.add(drawDownLine(actualX,actualY,YSpaceObj/2));
+                } else{
+                    elements.add(drawDownLine(actualX,actualY,YSpaceObj));
                 }
                 fontSize = 15;
                 widthObj = 150;
@@ -326,12 +429,15 @@ public class FlowChart {
 
             } else if(elem.getElementType().equals("IO")) {
                 if(elem.getBranch() != -1){
+                    int clay[] = getConditionalLayout(i,xlay,actualXlay,spc);
                     if(elem.getBranch() == 1){
-                        actualX = xlay.get(actualXlay) - (XSpaceObj + widthObj)/2;
-                        actualY = ylay[actualXlay];
+                        //actualX = xlay.get(actualXlay) - (XSpaceObj + widthObj)/2;
+                        actualX = clay[0];
+                        actualY = ylay[actualXlay- clay[2]];
                     } else{
-                        actualX = xlay.get(actualXlay) + (XSpaceObj + widthObj)/2;
-                        actualY = ylay[actualXlay+1];
+                        //actualX = xlay.get(actualXlay) + (XSpaceObj + widthObj)/2;
+                        actualX = clay[1];
+                        actualY = ylay[actualXlay+1 + clay[3]];
                     }
                 } else {
                     if(xlay.size() > 0) {
@@ -339,39 +445,56 @@ public class FlowChart {
                     }
                     actualY = ylay[xlay.size() + 1];
                 }
+                if(flagMerge){
+                    flagMerge = false;
+                    elements.add(drawDownLine(actualX,actualY,YSpaceObj/2));
+                } else{
+                    elements.add(drawDownLine(actualX,actualY,YSpaceObj));
+                }
                 fontSize = 15;
                 widthObj = 150;
-                Shape io = drawParallelogram(actualX,actualY,widthObj,heightObj,10);
+                Shape io = drawParallelogram(actualX,actualY,widthObj-10,heightObj,5);
                 io.setStroke(Color.BLACK);
                 io.setFill(Color.LIGHTYELLOW);
                 io.setBlendMode(BlendMode.SRC_ATOP);
                 elements.add(io);
-                List<Object> ioText = fitText(actualX,actualY,widthObj,heightObj,elem.getTextStr(),fontSize);
+                List<Object> ioText = fitText(actualX,actualY,widthObj-10,heightObj,elem.getTextStr(),fontSize);
                 for(int line = 0; line < ioText.size();line++){
                     elements.add(ioText.get(line));
                 }
                 //actualY = actualY + heightObj + YSpaceObj;
+                ylay[xlay.size() + 1] = actualY + heightObj + YSpaceObj;
                 if(elem.getBranch() != -1){
                     if(elem.getBranch() == 1){ ylay[actualXlay] = actualY + heightObj + YSpaceObj;
                     } else{ ylay[actualXlay+1] = actualY + heightObj + YSpaceObj; }
-                } else { ylay[xlay.size() + 1] = actualY + heightObj + YSpaceObj; }
+                } else {  }
             } else if(elem.getElementType().equals("Decision")) {
+
                 if(elem.getBranch() != -1){
+                    int clay[] = getConditionalLayout(i,xlay,actualXlay,spc);
                     if(elem.getBranch() == 1){
-                        actualY = ylay[actualXlay];
+                        actualX = clay[0];
+                        actualY = ylay[actualXlay - clay[2]];
                     } else{
-                        actualY = ylay[actualXlay+1];
+                        actualX = clay[1];
+                        actualY = ylay[actualXlay+1 + clay[3]];
                     }
+
                 } else {
+                    if(xlay.size() > 0) {
+                        actualX = xlay.get(initXlay);
+                    }
                     actualY = ylay[xlay.size() + 1];
+                    elements.add(drawDownLine(actualX,actualY,YSpaceObj));
                 }
                 actualXlay = this.splitPoints.indexOf(i);
+                if(elem.getBranch() != -1){elements.add(drawDecisionLine(actualX,actualY,YSpaceObj,xlay.get(actualXlay)));}
                 actualX = xlay.get(actualXlay);
                 fontSize = 15;
                 widthObj = 150;
                 Shape decision = drawRhombus(actualX,actualY,widthObj,heightObj);
                 decision.setStroke(Color.BLACK);
-                decision.setFill(Color.MEDIUMORCHID);
+                decision.setFill(Color.LAVENDER);
                 decision.setBlendMode(BlendMode.SRC_ATOP);
                 elements.add(decision);
                 List<Object> decisionText = fitText(actualX,actualY+heightObj/10,4*widthObj/5,4*heightObj/5,elem.getTextStr(),fontSize);
@@ -379,9 +502,36 @@ public class FlowChart {
                     elements.add(decisionText.get(line));
                 }
                 //actualY = actualY + heightObj + YSpaceObj;
+
+                int initDestXY1[] = {actualX-(widthObj/2),actualY+(heightObj/2),actualX-(widthObj/2)-(XSpaceObj/2),actualY+(heightObj)};
+                int initDestXY2[] = {actualX+(widthObj/2),actualY+(heightObj/2),actualX+(widthObj/2)+(XSpaceObj/2),actualY+(heightObj)};
+                elements.add(drawBranchesLine(initDestXY1,initDestXY2));
                 ylay[actualXlay] = actualY + heightObj + YSpaceObj;
                 ylay[actualXlay+1] = actualY + heightObj + YSpaceObj;
             } else if(elem.getElementType().equals("End")) {
+                if(elem.getBranch() != -1){
+                    int clay[] = getConditionalLayout(i,xlay,actualXlay,spc);
+                    if(elem.getBranch() == 1){
+                        actualX = clay[0];
+                        actualY = ylay[actualXlay - clay[2]];
+                    } else{
+                        actualX = clay[1];
+                        actualY = ylay[actualXlay+1 + clay[3]];
+                    }
+
+                } else {
+                    if(xlay.size() > 0) {
+                        actualX = xlay.get(initXlay);
+                    }
+                    actualY = ylay[xlay.size() + 1];
+                    elements.add(drawDownLine(actualX,actualY,YSpaceObj));
+                }
+                if(flagMerge){
+                    flagMerge = false;
+                    elements.add(drawDownLine(actualX,actualY,YSpaceObj/2));
+                } else{
+                    elements.add(drawDownLine(actualX,actualY,YSpaceObj));
+                }
                 fontSize = 20;
                 widthObj = 100;
                 Ellipse end = new Ellipse(actualX,actualY + heightObj/2,widthObj/2,heightObj/2);
@@ -395,11 +545,48 @@ public class FlowChart {
                 endText.setY(actualY + heightObj/2 + endText.getLayoutBounds().getHeight()/4);
                 elements.add(end);
                 elements.add(endText);
+                if(elem.getBranch() != -1){
+                    if(elem.getBranch() == 1){ ylay[actualXlay] = actualY + heightObj + YSpaceObj;
+                    } else{ ylay[actualXlay+1] = actualY + heightObj + YSpaceObj; }
+                } else { ylay[xlay.size() + 1] = actualY + heightObj + YSpaceObj; }
+            } else if(elem.getElementType().equals("Merge")) {
+                flagMerge = true;
+                int clay[] = getConditionalLayout(i,xlay,actualXlay,spc);
+                int actualY1 = ylay[actualXlay], actualY2 = ylay[actualXlay+1];
+                System.out.print(",clay:"+clay[0]+","+clay[1]);
+                if(elem.getBranch() != -1){
+                    if(elem.getBranch() == 1){
+                        actualY = ylay[actualXlay - clay[2]];
+                        actualX = clay[0];
+                    } else{
+                        actualY = ylay[actualXlay+1 + clay[3]];
+                        actualX = clay[1];
+                    }
+                } else {
+                    //if(xlay.size() > 0) {
+                        //actualX = xlay.get(initXlay);
+                    //} else {
+                        actualX = w/2;
+                    //}
+                    int maxYlay = 0;
+                    for(int e = 0;e < ylay.length;e++){
+                        if(ylay[e] > maxYlay){
+                            maxYlay = ylay[e];
+                        }
+                    }
+                    ylay[xlay.size()+1] = maxYlay;
+                    actualY = ylay[xlay.size() + 1];
+
+                }
+                //elements.add(drawDownLine(actualX,actualY,YSpaceObj));
+                elements.add(drawMergeLine(clay[0],actualY1,clay[1],actualY2,YSpaceObj,actualX));
+                //actualXlay++; //Supposing all merges are from left to right
             } else {
                 System.out.println("Warning: Invalid Element Type ");
             }
+            System.out.println();
         }
-
+        this.printFlowchartTrace();
         return elements;
     }
 
