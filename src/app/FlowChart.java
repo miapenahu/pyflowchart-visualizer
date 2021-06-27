@@ -74,7 +74,7 @@ public class FlowChart {
         if(etype.equals("Merge")){
             if(this.openDecisions > 1){
                 this.openDecisions = this.openDecisions - 1;
-                this.setWritingBranch(1); //True
+                this.setWritingBranch(this.getWritingBranch());
             } else if(this.openDecisions == 1){
                 this.openDecisions = this.openDecisions - 1;
                 this.setWritingBranch(-1); //None
@@ -183,6 +183,23 @@ public class FlowChart {
         return ans;
     }
 
+    private List<Text> drawBranchesText(int initDestXY1[], int initDestXY2[]){
+        List<Text> text = new ArrayList<Text>();
+        Text yesText = new Text("Si");
+        yesText.setFont(Font.font("Verdana",15));
+        yesText.setX((initDestXY1[2] - yesText.getLayoutBounds().getWidth() - 5));
+        yesText.setY((initDestXY1[1]+initDestXY1[3])/2 + yesText.getLayoutBounds().getHeight()/4);
+        yesText.setBlendMode(BlendMode.SRC_ATOP);
+        text.add(yesText);
+        Text noText = new Text("No");
+        noText.setFont(Font.font("Verdana",15));
+        noText.setX(initDestXY2[2] + 5);
+        noText.setY((initDestXY2[1]+initDestXY2[3])/2 + noText.getLayoutBounds().getHeight()/4);
+        noText.setBlendMode(BlendMode.SRC_ATOP);
+        text.add(noText);
+        return text;
+    }
+
     private Shape drawMergeLine(int actualX1,int actualY1, int actualX2, int actualY2, int YSpaceObj,int destX){
 /*        MoveTo point1 = new MoveTo(initX1,actualY - YSpaceObj);
         LineTo line1 = new LineTo(initX1,actualY - YSpaceObj/2);
@@ -199,10 +216,10 @@ public class FlowChart {
         } else{
             maxY = actualY1;
         }
-        MoveTo point1 = new MoveTo(actualX1,actualY1 - YSpaceObj);
-        LineTo line1 = new LineTo(actualX1,maxY - YSpaceObj/2);
-        LineTo line2 = new LineTo(actualX2,maxY - YSpaceObj/2);
-        LineTo line3 = new LineTo(actualX2,actualY2 - YSpaceObj);
+        MoveTo point1 = new MoveTo(actualX1,actualY1);
+        LineTo line1 = new LineTo(actualX1,maxY + YSpaceObj/2);
+        LineTo line2 = new LineTo(actualX2,maxY + YSpaceObj/2);
+        LineTo line3 = new LineTo(actualX2,actualY2);
         Path ans = new Path(point1,line1,line2,line3);
         ans.setBlendMode(BlendMode.SRC_ATOP);
         return ans;
@@ -506,6 +523,10 @@ public class FlowChart {
                 int initDestXY1[] = {actualX-(widthObj/2),actualY+(heightObj/2),actualX-(widthObj/2)-(XSpaceObj/2),actualY+(heightObj)};
                 int initDestXY2[] = {actualX+(widthObj/2),actualY+(heightObj/2),actualX+(widthObj/2)+(XSpaceObj/2),actualY+(heightObj)};
                 elements.add(drawBranchesLine(initDestXY1,initDestXY2));
+                List<Text> branchesText = drawBranchesText(initDestXY1,initDestXY2);
+                for(int line = 0; line < branchesText.size();line++){
+                    elements.add(branchesText.get(line));
+                }
                 ylay[actualXlay] = actualY + heightObj + YSpaceObj;
                 ylay[actualXlay+1] = actualY + heightObj + YSpaceObj;
             } else if(elem.getElementType().equals("End")) {
@@ -552,14 +573,15 @@ public class FlowChart {
             } else if(elem.getElementType().equals("Merge")) {
                 flagMerge = true;
                 int clay[] = getConditionalLayout(i,xlay,actualXlay,spc);
-                int actualY1 = ylay[actualXlay], actualY2 = ylay[actualXlay+1];
-                System.out.print(",clay:"+clay[0]+","+clay[1]);
+                int actualY1 = ylay[actualXlay - clay[2]], actualY2 = ylay[actualXlay+1+ clay[3]];
+
+                System.out.print(", clay: "+clay[0]+", "+clay[1]+", "+clay[2]+", "+clay[3]);
                 if(elem.getBranch() != -1){
                     if(elem.getBranch() == 1){
-                        actualY = ylay[actualXlay - clay[2]];
+                        //actualY1 = ylay[actualXlay - clay[2]];
                         actualX = clay[0];
                     } else{
-                        actualY = ylay[actualXlay+1 + clay[3]];
+                        //actualY2 = ylay[actualXlay+1 + clay[3]];
                         actualX = clay[1];
                     }
                 } else {
@@ -578,9 +600,23 @@ public class FlowChart {
                     actualY = ylay[xlay.size() + 1];
 
                 }
-                //elements.add(drawDownLine(actualX,actualY,YSpaceObj));
-                elements.add(drawMergeLine(clay[0],actualY1,clay[1],actualY2,YSpaceObj,actualX));
-                //actualXlay++; //Supposing all merges are from left to right
+                int ymax = actualY1 > actualY2 ? actualY1 : actualY2;
+                if(this.flowchart.get(i-1).getElementType().equals("Merge")){
+                    if(ymax == actualY1){
+                        elements.add(drawMergeLine(clay[0],actualY1-YSpaceObj/2,clay[1],actualY2-YSpaceObj,0,actualX));
+                    } else{
+                        elements.add(drawMergeLine(clay[0],actualY1-YSpaceObj,clay[1],actualY2-YSpaceObj/2,0,actualX));
+                    }
+ /*                   if(elem.getBranch() == 1){
+                        elements.add(drawMergeLine(clay[0],actualY1-YSpaceObj/2,clay[1],actualY2-YSpaceObj,0,actualX));
+                    } else{
+                        elements.add(drawMergeLine(clay[0],actualY1-YSpaceObj,clay[1],actualY2-YSpaceObj/2,0,actualX));
+                    }*/
+                } else{
+                    elements.add(drawMergeLine(clay[0],actualY1-YSpaceObj,clay[1],actualY2-YSpaceObj,YSpaceObj,actualX));
+                }
+                ylay[actualXlay - clay[2]] = ymax;
+                ylay[actualXlay+1+ clay[3]] = ymax;
             } else {
                 System.out.println("Warning: Invalid Element Type ");
             }
