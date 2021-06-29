@@ -204,16 +204,16 @@ public class Controller {
     }
 
     public void onSplitsInButtonClicked(MouseEvent event){
-        List<Integer> test = flowC.computeSplitsToNode(Integer.parseInt(splitsInField.getText()));
+        /*List<Integer> test = flowC.computeSplitsToNode(Integer.parseInt(splitsInField.getText()));
         for(int i = 0; i < test.size(); i++){
             System.out.print(test.get(i)+", ");
         }
         System.out.println();
-        test = flowC.getXLayout((int)graphicPane.getWidth(),100);
+        test = flowC.getXLayout((int)graphicPane.getWidth(),100,25);
         for(int i = 0; i < test.size(); i++){
             System.out.print(test.get(i)+", ");
         }
-        System.out.println();
+        System.out.println();*/
     }
 
     public void onFinalButtonClicked(MouseEvent event){
