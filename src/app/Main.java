@@ -45,20 +45,20 @@ public class Main extends Application {
 
 
     public static void main(String[] args) throws Exception {
-        try{
+        /* try{
             // create a CharStream that reads from standard input
             // create a lexer that feeds off of input CharStream
-            Python3Lexer lexer;
+            PythonLexer lexer;
 
-            lexer = new Python3Lexer(CharStreams.fromFileName(args[0]));
-/*            if (args.length>0)
-                lexer = new Python3Lexer(CharStreams.fromFileName(args[0]));
+            //lexer = new Python3Lexer(CharStreams.fromFileName(args[0]));
+            if (args.length>0)
+                lexer = new PythonLexer(CharStreams.fromFileName(args[0]));
             else
-                lexer = new Python3Lexer(CharStreams.fromStream(System.in));*/
+                lexer = new PythonLexer(CharStreams.fromStream(System.in));
             // create a buffer of tokens pulled from the lexer
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             // create a parser that feeds off the tokens buffer
-            Python3Parser parser = new Python3Parser(tokens);
+            PythonParser parser = new PythonParser(tokens);
             ParseTree tree = parser.file_input(); // begin parsing at init rule
 
             // Create a generic parse tree walker that can trigger callbacks
@@ -67,8 +67,8 @@ public class Main extends Application {
             walker.walk(new PythonToFlowChart(), tree);
             System.out.println(); // print a \n after translation
         } catch (Exception e){
-            //System.err.println("Error (Test): " + e);
-        }
+            System.err.println("Error (Test): " + e);
+        } */
         launch(args);
     }
 }

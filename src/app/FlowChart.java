@@ -277,7 +277,7 @@ public class FlowChart {
         }
     }*/
 
-    public void computeSplits2(){
+    /*public void computeSplits2(){
         List<List<Integer>> splitPoints = new ArrayList<>();
         int lastSplitPoint = -1;
         boolean mergeFlag = false;
@@ -327,6 +327,92 @@ public class FlowChart {
             }
         }
         System.out.println(splitPoints);
+        this.splitPoints = splitPoints;
+    }*/
+
+    public List<List<Integer>> getChildrenTrue(int node){
+        List<List<Integer>> splitPoints = new ArrayList<>();
+        List<Integer> temp = new ArrayList<>();
+        temp.add(node);
+        for(int i = node+1; i < this.flowchart.size();i++){
+            if(flowchart.get(i).getElementType().equals("Decision") && flowchart.get(i).getBranch() == 1){
+                splitPoints = new ArrayList<>(getChildrenTrue(i));
+                splitPoints.add(temp);
+                return splitPoints;
+            }
+        }
+        splitPoints.add(temp);
+        return splitPoints;
+    }
+
+    public List<List<Integer>> getChildrenFalse(int node){
+        List<List<Integer>> splitPoints = new ArrayList<>();
+        List<Integer> temp = new ArrayList<>();
+        temp.add(node);
+        for(int i = node+1; i < this.flowchart.size();i++){
+            if(flowchart.get(i).getElementType().equals("Decision") && flowchart.get(i).getBranch() == 0){
+                splitPoints.add(temp);
+                splitPoints.addAll(getChildrenFalse(i));
+                return splitPoints;
+            }
+        }
+        splitPoints.add(temp);
+        return splitPoints;
+    }
+
+    /*public List<List<Integer>> getChildren(int node){
+        //Object [] ans = new Object[2];
+        List<List<Integer>> splitPoints = new ArrayList<>();
+        List<Integer> temp = new ArrayList<>();
+        temp.add(node);
+        boolean branchtrue = false;
+        boolean branchfalse = false;
+        for(int i = node+1; i < this.flowchart.size();i++){
+            //if()
+            if(flowchart.get(i).getElementType().equals("Decision")){
+                if(flowchart.get(i).getBranch() == 1){
+                    splitPoints.addAll(getChildren(i)[1]);
+                    branchtrue = true;
+                    if(branchfalse){
+                        splitPoints.remove(temp);
+                    }
+                }
+                splitPoints.add(temp);
+                if(flowchart.get(i).getBranch() == 0){
+                    splitPoints.addAll(getChildren(i)[1]);
+                    branchfalse = true;
+                    if(branchtrue){
+                        splitPoints.remove(temp);
+                    }
+                }
+
+                if(branchtrue && branchfalse){
+                    //ans[0] =
+                    return splitPoints;
+                }
+            }
+        }
+        splitPoints.add(temp);
+        return splitPoints;
+    }*/
+
+
+    public void computeSplits2(){
+        List<List<Integer>> splitPoints = new ArrayList<>();
+        System.out.println();
+        System.out.println("Inicio computesplits2");
+        for(int i = 0; i < this.flowchart.size();i++){
+            if(flowchart.get(i).getElementType().equals("Decision")){
+                splitPoints.addAll(getChildrenTrue(i));
+                System.out.println("Splitpoints: "+splitPoints);
+                splitPoints = new ArrayList<>(removeElemListofList(splitPoints,i));
+                splitPoints.addAll(getChildrenFalse(i));
+                break;
+            }
+        }
+        System.out.println("Splitpoints: "+splitPoints);
+        System.out.println("Fin computesplits2");
+        System.out.println();
         this.splitPoints = splitPoints;
     }
 

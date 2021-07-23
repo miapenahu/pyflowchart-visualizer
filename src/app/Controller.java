@@ -1,25 +1,40 @@
 package app;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
+import javafx.util.Duration;
+import org.antlr.v4.runtime.ANTLRErrorListener;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class Controller {
 
@@ -33,7 +48,9 @@ public class Controller {
     private int openBranches = 0;
     //private int writingBranch = -1;
     private int openWhileBlocks = 0;
-
+    //editor.fxml
+    @FXML private TextArea editorTextArea;
+    //graphics.fxml
     @FXML private AnchorPane editorPane;
     @FXML private ImageView editorArrow;
     @FXML private ImageView builderArrow;
@@ -50,6 +67,61 @@ public class Controller {
     @FXML private Button endBlockButton;
     @FXML private TextField cntOpenWhileBlocks;
     @FXML private TextField splitsInField;
+
+    public void initialize(){
+        /*editorTextArea.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
+                // this will run whenever text is changed
+                //System.out.println("Testing listener");
+                test();
+            }
+        });*/
+        PauseTransition pause = new PauseTransition(Duration.seconds(1));
+        editorTextArea.textProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    pause.setOnFinished(event -> test());//doSomething(newValue));
+                    pause.playFromStart();
+                });
+    }
+
+    public void test(){
+        try{
+            // create a CharStream that reads from standard input
+            // create a lexer that feeds off of input CharStream
+            PythonLexer lexer;
+
+            //lexer = new Python3Lexer(CharStreams.fromFileName(args[0]));
+            //if (args.length>0)
+            //    lexer = new PythonLexer(CharStreams.fromFileName(args[0]));
+            //else
+            InputStream stream = new ByteArrayInputStream(editorTextArea.getText().getBytes(StandardCharsets.UTF_8));
+            lexer = new PythonLexer(CharStreams.fromStream(stream));
+            // create a buffer of tokens pulled from the lexer
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            // create a parser that feeds off the tokens buffer
+            PythonParser parser = new PythonParser(tokens);
+            //ParseTree tree = parser.single_input(); // begin parsing at init rule
+
+            //ParseTree tree = parser.test();
+            parser.removeErrorListeners();
+            parser.addErrorListener(ThrowingErrorListener.INSTANCE);
+            ParseTree tree = parser.root(); // begin parsing at init rule
+            //for (ANTLRErrorListener listener : parser.getErrorListeners()) { //View all error listeners
+            //    System.out.println(listener);
+            //}
+            // Create a generic parse tree walker that can trigger callbacks
+            ParseTreeWalker walker = new ParseTreeWalker();
+            // Walk the tree created during the parse, trigger callbacks
+            walker.walk(new PythonToFlowChart(), tree);
+           // System.out.println("Good code!"); // print a \n after translation
+            editorTextArea.setStyle("-fx-text-fill: green");
+        } catch (Exception e){
+            //System.out.println("Bad code :(");
+            editorTextArea.setStyle("-fx-text-fill: red");
+            System.err.println("Error (Test): " + e);
+        }
+    }
 
     public void switchToMenu(MouseEvent event) throws IOException {
         root = FXMLLoader.load(getClass().getResource("menu.fxml"));
@@ -77,6 +149,41 @@ public class Controller {
         scene.setFill(Color.TRANSPARENT);
         stage.setScene(scene);
         stage.show();
+    }
+
+    FileChooser fileC = new FileChooser();
+
+
+
+    public void onGuardarButtonClicked(MouseEvent event) throws IOException{
+        //fileC.setInitialDirectory(new File("C:\\"));
+
+        Window stage = editorTextArea.getScene().getWindow();
+        fileC.setTitle("Guardar Código");
+        fileC.setInitialFileName("script");
+        fileC.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Python script", "*.py"));
+        try {
+            File file = fileC.showSaveDialog(stage);
+            ObservableList<CharSequence> paragraph = editorTextArea.getParagraphs();
+            Iterator<CharSequence> iter = paragraph.iterator();
+            try {
+                BufferedWriter bf = new BufferedWriter(new FileWriter(new File(file.getAbsolutePath())));
+                while(iter.hasNext()) {
+                    CharSequence seq = iter.next();
+                    bf.append(seq);
+                    bf.newLine();
+                }
+                bf.flush();
+                bf.close();
+            } catch (IOException e) {
+                System.err.println("Error al crear el archivo: " + e);
+            }
+            //System.out.println("Abs path: "+ file.getAbsolutePath());
+            fileC.setInitialDirectory(file.getParentFile());
+        } catch(Exception e){
+            System.err.println("Error al guardar: " + e);
+        }
+        /**/
     }
 
     public void onGraficarButtonClicked(MouseEvent event) throws IOException{
@@ -108,6 +215,7 @@ public class Controller {
 
         Gscene.heightProperty().addListener((obs, oldVal, newVal) -> {
         });
+
     }
 
     public void onEditorButtonClicked(MouseEvent event){
