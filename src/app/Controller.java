@@ -77,12 +77,12 @@ public class Controller {
                 test();
             }
         });*/
-        PauseTransition pause = new PauseTransition(Duration.seconds(1));
-        editorTextArea.textProperty().addListener(
-                (observable, oldValue, newValue) -> {
-                    pause.setOnFinished(event -> test());//doSomething(newValue));
-                    pause.playFromStart();
-                });
+//        PauseTransition pause = new PauseTransition(Duration.seconds(1));
+//        editorTextArea.textProperty().addListener(
+//                (observable, oldValue, newValue) -> {
+//                    pause.setOnFinished(event -> test());//doSomething(newValue));
+//                    pause.playFromStart();
+//                });
     }
 
     public void test(){
