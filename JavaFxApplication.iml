@@ -18,5 +18,14 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="antlr-4.9.2-complete" level="application" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../Librerias/ANTLR/antlr-4.9.2-complete.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
