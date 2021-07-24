@@ -51,7 +51,7 @@
       </StackPane>
       <AnchorPane fx:id="editorPane" layoutY="101.0" prefHeight="687.0" prefWidth="760.0" style="-fx-background-color: #291452;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0">
          <children>
-            <TextArea fx:id="editorTextArea" prefHeight="200.0" prefWidth="200.0" style="-fx-tab-size: 4;" text="def sum(a,b,iter = 1):&#10;    sum = a    &#10;    for elem in range(iter):&#10;        sum += b&#10;    return sum    &#10;print(&quot;La suma entre 2 y 2 veces 3 es: &quot;, sum(2,3,2))&#10;" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="120.0">
+            <TextArea fx:id="editorTextArea" prefHeight="200.0" prefWidth="200.0" style="-fx-tab-size: 4;" text="" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="120.0">
                <font>
                   <Font name="Courier New" size="15.0" />
                </font>
