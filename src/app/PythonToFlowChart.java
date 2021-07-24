@@ -5,6 +5,17 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class PythonToFlowChart extends PythonParserBaseListener {
+
+    private FlowChart drawerChart = new FlowChart();
+
+    public FlowChart getDrawerChart() {
+        return drawerChart;
+    }
+
+    public void setDrawerChart(FlowChart drawerChart) {
+        this.drawerChart = drawerChart;
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -20,6 +31,8 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      */
     @Override public void exitRoot(PythonParser.RootContext ctx) {
         System.out.println("1 FIN programa");
+        drawerChart.addFlowElement("End","");
+        //drawerChart.printFlowchartTrace();
     }
     /**
      * {@inheritDoc}
@@ -91,7 +104,11 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterIf_stmt(PythonParser.If_stmtContext ctx) {
-        System.out.println("10 Entrada al IF");
+        System.out.println("10 Entrada al IF: "+ ctx.getText());
+        String[] parts = ctx.getText().split(":");
+        String ans = parts[0].substring(2,parts[0].length());
+        drawerChart.addFlowElement("Decision","Si "+ ans);
+        //flowC.setWritingBranch(1); //True
     }
     /**
      * {@inheritDoc}
@@ -100,6 +117,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      */
     @Override public void exitIf_stmt(PythonParser.If_stmtContext ctx) {
         System.out.println("11 Salida del IF");
+        drawerChart.addFlowElement("Merge","");
     }
     /**
      * {@inheritDoc}
@@ -236,6 +254,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      */
     @Override public void enterElse_clause(PythonParser.Else_clauseContext ctx) {
         System.out.println("28 Entrada ELSE");
+        drawerChart.setWritingBranch(0); //False
     }
     /**
      * {@inheritDoc}
@@ -443,7 +462,12 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterExpr_stmt(PythonParser.Expr_stmtContext ctx) {
-        System.out.println("54 Entrada declaración expresión ");
+        System.out.println("54 Entrada declaración expresión: " + ctx.getText());
+        if(ctx.getText().contains("print")){
+            drawerChart.addFlowElement("IO",ctx.getText());
+        } else if(ctx.getText().contains("=")){
+            drawerChart.addFlowElement("Process",ctx.getText());
+        }
     }
     /**
      * {@inheritDoc}
@@ -683,7 +707,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterTestlist_star_expr(PythonParser.Testlist_star_exprContext ctx) {
-        System.out.println("84");
+        //System.out.println("84");
     }
     /**
      * {@inheritDoc}
@@ -691,7 +715,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitTestlist_star_expr(PythonParser.Testlist_star_exprContext ctx) {
-        System.out.println("85");
+        //System.out.println("85");
     }
     /**
      * {@inheritDoc}
@@ -811,7 +835,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterTest(PythonParser.TestContext ctx) {
-        System.out.println("100");
+        //System.out.println("100");
     }
     /**
      * {@inheritDoc}
@@ -819,7 +843,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitTest(PythonParser.TestContext ctx) {
-        System.out.println("101");
+        //System.out.println("101");
     }
     /**
      * {@inheritDoc}
@@ -907,7 +931,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterLogical_test(PythonParser.Logical_testContext ctx) {
-        System.out.println("112 Entrada test logico: "+ctx.getText());
+        //System.out.println("112 Entrada test logico: "+ctx.getText());
     }
     /**
      * {@inheritDoc}
@@ -915,7 +939,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitLogical_test(PythonParser.Logical_testContext ctx) {
-        System.out.println("113 Salida test logico: "+ctx.getText());
+        //System.out.println("113 Salida test logico: "+ctx.getText());
     }
     /**
      * {@inheritDoc}
@@ -923,7 +947,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterComparison(PythonParser.ComparisonContext ctx) {
-        System.out.println("114 Entrada comparación: "+ctx.getText());
+        //System.out.println("114 Entrada comparación: "+ctx.getText());
     }
     /**
      * {@inheritDoc}
@@ -931,7 +955,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitComparison(PythonParser.ComparisonContext ctx) {
-        System.out.println("115 Salida comparación: "+ctx.getText());
+        //System.out.println("115 Salida comparación: "+ctx.getText());
     }
     /**
      * {@inheritDoc}
@@ -939,7 +963,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterExpr(PythonParser.ExprContext ctx) {
-        System.out.println("116 Entrada expresión: "+ctx.getText());
+        //System.out.println("116 Entrada expresión: "+ctx.getText());
     }
     /**
      * {@inheritDoc}
@@ -947,7 +971,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitExpr(PythonParser.ExprContext ctx) {
-        System.out.println("117 Salida expresión: "+ctx.getText());
+        //System.out.println("117 Salida expresión: "+ctx.getText());
     }
     /**
      * {@inheritDoc}
@@ -1003,7 +1027,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterTestlist(PythonParser.TestlistContext ctx) {
-        System.out.println("124");
+        //System.out.println("124");
     }
     /**
      * {@inheritDoc}
@@ -1011,7 +1035,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitTestlist(PythonParser.TestlistContext ctx) {
-        System.out.println("125");
+        //System.out.println("125");
     }
     /**
      * {@inheritDoc}
@@ -1115,7 +1139,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterTrailer(PythonParser.TrailerContext ctx) {
-        System.out.println("138");
+        //System.out.println("138");
     }
     /**
      * {@inheritDoc}
@@ -1123,7 +1147,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitTrailer(PythonParser.TrailerContext ctx) {
-        System.out.println("139");
+        //System.out.println("139");
     }
     /**
      * {@inheritDoc}
@@ -1131,7 +1155,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterArguments(PythonParser.ArgumentsContext ctx) {
-        System.out.println("140 Entrada Argumentos: "+ctx.getText());
+        //System.out.println("140 Entrada Argumentos: "+ctx.getText());
     }
     /**
      * {@inheritDoc}
@@ -1139,7 +1163,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitArguments(PythonParser.ArgumentsContext ctx) {
-        System.out.println("141 Salida Argumentos: "+ctx.getText());
+        //System.out.println("141 Salida Argumentos: "+ctx.getText());
     }
     /**
      * {@inheritDoc}
@@ -1147,7 +1171,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterArglist(PythonParser.ArglistContext ctx) {
-        System.out.println("142");
+        //System.out.println("142 Entrada lista args");
     }
     /**
      * {@inheritDoc}
@@ -1155,7 +1179,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitArglist(PythonParser.ArglistContext ctx) {
-        System.out.println("143");
+        //System.out.println("143 Salida lista args");
     }
     /**
      * {@inheritDoc}
@@ -1163,7 +1187,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterArgument(PythonParser.ArgumentContext ctx) {
-        System.out.println("144 Entrada argumento: "+ctx.getText());
+        //System.out.println("144 Entrada argumento: "+ctx.getText());
     }
     /**
      * {@inheritDoc}
@@ -1171,7 +1195,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitArgument(PythonParser.ArgumentContext ctx) {
-        System.out.println("145");
+        //System.out.println("145 Salida argumento: "+ctx.getText());
     }
     /**
      * {@inheritDoc}

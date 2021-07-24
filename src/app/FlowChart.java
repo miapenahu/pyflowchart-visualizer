@@ -20,6 +20,54 @@ public class FlowChart {
     private int splitsLeft = 0;
     private int splits = 0;
 
+    public List<FlowElement> getFlowchart() {
+        return flowchart;
+    }
+
+    public void setFlowchart(List<FlowElement> flowchart) {
+        this.flowchart = flowchart;
+    }
+
+    public List<List<Integer>> getSplitPoints() {
+        return splitPoints;
+    }
+
+    public void setSplitPoints(List<List<Integer>> splitPoints) {
+        this.splitPoints = splitPoints;
+    }
+
+    public int getLastSplitPoint() {
+        return lastSplitPoint;
+    }
+
+    public void setLastSplitPoint(int lastSplitPoint) {
+        this.lastSplitPoint = lastSplitPoint;
+    }
+
+    public int getSplitsRight() {
+        return splitsRight;
+    }
+
+    public void setSplitsRight(int splitsRight) {
+        this.splitsRight = splitsRight;
+    }
+
+    public int getSplitsLeft() {
+        return splitsLeft;
+    }
+
+    public void setSplitsLeft(int splitsLeft) {
+        this.splitsLeft = splitsLeft;
+    }
+
+    public int getSplits() {
+        return splits;
+    }
+
+    public void setSplits(int splits) {
+        this.splits = splits;
+    }
+
     public int getWritingBranch() {
         return writingBranch;
     }
@@ -65,6 +113,20 @@ public class FlowChart {
     public FlowChart(){
         this.addFlowElement("Start","");
     }
+
+    public FlowChart(FlowChart another){
+        this.flowchart = another.getFlowchart();
+        this.splitPoints = another.getSplitPoints();
+        this.lastSplitPoint = another.getLastSplitPoint();
+        this.writingBranch = another.getWritingBranch();
+        this.openDecisions = another.getOpenDecisions();
+        this.writingBlock = another.getWritingBlock();
+        this.openLoops = another.getOpenLoops();
+        this.splitsRight = another.getSplitsRight();
+        this.splitsLeft = another.getSplitsLeft();
+        this.splits = another.getSplits();
+    }
+
 
     public int getLength(){
         return this.flowchart.size();
@@ -399,20 +461,20 @@ public class FlowChart {
 
     public void computeSplits2(){
         List<List<Integer>> splitPoints = new ArrayList<>();
-        System.out.println();
-        System.out.println("Inicio computesplits2");
+        //System.out.println();
+        //System.out.println("Inicio computesplits2");
         for(int i = 0; i < this.flowchart.size();i++){
             if(flowchart.get(i).getElementType().equals("Decision")){
                 splitPoints.addAll(getChildrenTrue(i));
-                System.out.println("Splitpoints: "+splitPoints);
+                //System.out.println("Splitpoints: "+splitPoints);
                 splitPoints = new ArrayList<>(removeElemListofList(splitPoints,i));
                 splitPoints.addAll(getChildrenFalse(i));
                 break;
             }
         }
-        System.out.println("Splitpoints: "+splitPoints);
-        System.out.println("Fin computesplits2");
-        System.out.println();
+        //System.out.println("Splitpoints: "+splitPoints);
+        //System.out.println("Fin computesplits2");
+        //System.out.println();
         this.splitPoints = splitPoints;
     }
 
@@ -560,7 +622,7 @@ public class FlowChart {
         } else{
             ans.remove(elem);
         }
-        System.out.println("removed ans: "+ans);
+        //System.out.println("removed ans: "+ans);
         return ans;
     }
 
@@ -582,7 +644,7 @@ public class FlowChart {
         for(int i = 0;i < node;i++){
 
             if(this.flowchart.get(i).getElementType().equals("Decision") && cntMerge == 1){
-                System.out.println("Inside decision revert");
+                //System.out.println("Inside decision revert");
                 ans[0] = xlay.get(actualXlay) - (spc/2);
                 ans[1] = xlay.get(actualXlay) + (spc/2);
                 ans[2] = 0; //Num Merges on Left
@@ -684,17 +746,17 @@ public class FlowChart {
         //ylay[actualXlay] = actualY + heightObj + YSpaceObj;
         int finalActualY = actualY;
         ylay = Arrays.stream(ylay).map(i -> finalActualY + heightObj + YSpaceObj).toArray();
-        System.out.println("xlay: "+ xlay.toString()+",ylay: "+Arrays.toString(ylay));
+        //System.out.println("xlay: "+ xlay.toString()+",ylay: "+Arrays.toString(ylay));
         for(int i = 1; i < this.getLength(); i++){
             //elements.add(drawDownLine(actualX,actualY,spaceObj));
-            System.out.print("xlay:"+ xlay.toString()+",ylay:"+Arrays.toString(ylay));
+            //System.out.print("xlay:"+ xlay.toString()+",ylay:"+Arrays.toString(ylay));
             FlowElement elem = this.flowchart.get(i);
-            System.out.print(",branch: "+elem.getBranch()+",block: "+elem.getBlock());
+            //System.out.print(",branch: "+elem.getBranch()+",block: "+elem.getBlock());
             if(elem.getElementType().equals("Process")){
                 int clay[] = {0,0,0,0};
                 if(elem.getBranch() != -1){
                     clay = getConditionalLayout(i,xlay,actualXlay,spc);
-                    System.out.print(", type: Process, clay: "+clay[0]+", "+clay[1]+", "+clay[2]+", "+clay[3]);
+                    //System.out.print(", type: Process, clay: "+clay[0]+", "+clay[1]+", "+clay[2]+", "+clay[3]);
                     if(elem.getBranch() == 1){
                         //actualX = xlay.get(actualXlay) - (XSpaceObj + widthObj)/2;
                         actualX = clay[0];
@@ -742,7 +804,7 @@ public class FlowChart {
                 int clay[] = {0,0,0,0};
                 if(elem.getBranch() != -1){
                     clay = getConditionalLayout(i,xlay,actualXlay,spc);
-                    System.out.print(", type: IO, clay: "+clay[0]+", "+clay[1]+", "+clay[2]+", "+clay[3]);
+                    //System.out.print(", type: IO, clay: "+clay[0]+", "+clay[1]+", "+clay[2]+", "+clay[3]);
                     if(elem.getBranch() == 1){
                         //actualX = xlay.get(actualXlay) - (XSpaceObj + widthObj)/2;
                         actualX = clay[0];
@@ -790,7 +852,7 @@ public class FlowChart {
 
                 if(elem.getBranch() != -1){
                     int clay[] = getConditionalLayout(i,xlay,actualXlay,spc);
-                    System.out.print(", type: Decision, clay: "+clay[0]+", "+clay[1]+", "+clay[2]+", "+clay[3]);
+                    //System.out.print(", type: Decision, clay: "+clay[0]+", "+clay[1]+", "+clay[2]+", "+clay[3]);
                     if(elem.getBranch() == 1){
                         actualX = clay[0];
                         actualY = ylay[actualXlay - clay[2]];
@@ -850,7 +912,7 @@ public class FlowChart {
                 int clay[] = {0,0,0,0};
                 if(elem.getBranch() != -1){
                     clay = getConditionalLayout(i,xlay,actualXlay,spc);
-                    System.out.print(", type: End, clay: "+clay[0]+", "+clay[1]+", "+clay[2]+", "+clay[3]);
+                    //System.out.print(", type: End, clay: "+clay[0]+", "+clay[1]+", "+clay[2]+", "+clay[3]);
                     if(elem.getBranch() == 1){
                         actualX = clay[0];
                         actualY = ylay[actualXlay - clay[2]];
@@ -899,7 +961,7 @@ public class FlowChart {
                 int clay[] = getConditionalLayout(i,xlay,actualXlay,spc);
                 int actualY1 = ylay[actualXlay - clay[2]], actualY2 = ylay[actualXlay+1+ clay[3]];
 
-                System.out.print(", type: Merge, clay: "+clay[0]+", "+clay[1]+", "+clay[2]+", "+clay[3]);
+                //System.out.print(", type: Merge, clay: "+clay[0]+", "+clay[1]+", "+clay[2]+", "+clay[3]);
                 if(elem.getBranch() != -1){
                     if(elem.getBranch() == 1){
                         //actualY1 = ylay[actualXlay - clay[2]];
@@ -939,9 +1001,9 @@ public class FlowChart {
             } else {
                 System.out.println("Warning: Invalid Element Type ");
             }
-            System.out.println();
+            //System.out.println();
         }
-        this.printFlowchartTrace();
+        //this.printFlowchartTrace();
         return elements;
     }
 

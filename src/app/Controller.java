@@ -2,8 +2,6 @@ package app;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,27 +21,31 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.util.Duration;
-import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 public class Controller {
 
-    private FlowChart flowC = new FlowChart();;
+    private FlowChart flowC = new FlowChart();
+    InputStream stream;
+    private FlowChart Drawerchart; // = new FlowChart();
 
     private Stage stage;
     private Stage graphics;
+    private Stage drawer;
     private Scene scene;
     private Parent root;
+
+    public void setDrawerchart(FlowChart drawerchart) {
+        Drawerchart = drawerchart;
+    }
 
     private int openBranches = 0;
     //private int writingBranch = -1;
@@ -56,6 +58,9 @@ public class Controller {
     @FXML private ImageView builderArrow;
     @FXML private Pane graphicPane;
     @FXML private ImageView closeGraphicsButton;
+    //Drawer
+    @FXML private Pane drawerPane;
+    @FXML private ImageView closeDrawerButton;
     //Text fields to complement flowchart
     @FXML private TextField printTextField;
     @FXML private TextField crearVarField;
@@ -78,16 +83,25 @@ public class Controller {
             }
         });*/
         if(editorTextArea != null) {
-            PauseTransition pause = new PauseTransition(Duration.seconds(3));
+            PauseTransition pause = new PauseTransition(Duration.seconds(1));
             editorTextArea.textProperty().addListener(
                     (observable, oldValue, newValue) -> {
-                        pause.setOnFinished(event -> test());//doSomething(newValue));
+                        pause.setOnFinished(event -> analizeGrammar());//doSomething(newValue));
                         pause.playFromStart();
                     });
         }
+        if(drawerPane != null){
+            PauseTransition pause = new PauseTransition(Duration.seconds(1));
+            drawerPane.widthProperty().addListener(
+                    (observable, oldValue, newValue) -> {
+                        pause.setOnFinished(event -> startListeningWHDrawer());//doSomething(newValue));
+                        pause.playFromStart();
+                    });
+
+        }
     }
 
-    public void test(){
+    public void analizeGrammar(){
         try{
             // create a CharStream that reads from standard input
             // create a lexer that feeds off of input CharStream
@@ -97,7 +111,7 @@ public class Controller {
             //if (args.length>0)
             //    lexer = new PythonLexer(CharStreams.fromFileName(args[0]));
             //else
-            InputStream stream = new ByteArrayInputStream(editorTextArea.getText().getBytes(StandardCharsets.UTF_8));
+            stream = new ByteArrayInputStream(editorTextArea.getText().getBytes(StandardCharsets.UTF_8));
             lexer = new PythonLexer(CharStreams.fromStream(stream));
             // create a buffer of tokens pulled from the lexer
             CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -115,13 +129,26 @@ public class Controller {
             // Create a generic parse tree walker that can trigger callbacks
             ParseTreeWalker walker = new ParseTreeWalker();
             // Walk the tree created during the parse, trigger callbacks
-            walker.walk(new PythonToFlowChart(), tree);
+            PythonToFlowChart pyflow = new PythonToFlowChart();
+            walker.walk(pyflow, tree);
+            /*if(pyflow.getDrawerChart() != null){
+                //System.out.println("pyflow isnt null!");
+                pyflow.getDrawerChart().printFlowchartTrace();
+            }*/
+            Drawerchart = new FlowChart(pyflow.getDrawerChart());
+            /*if(Drawerchart == null){
+                System.out.println("Drawchart is null!");
+            } else {
+                Drawerchart.printFlowchartTrace();
+            }*/
+            //printToDrawerPane(pyflow.drawerChart);
            // System.out.println("Good code!"); // print a \n after translation
             editorTextArea.setStyle("-fx-text-fill: green");
         } catch (Exception e){
             //System.out.println("Bad code :(");
             editorTextArea.setStyle("-fx-text-fill: red");
-            System.err.println("Error (Test): " + e);
+            System.err.println("Error (Test): "+ e);
+            //e.printStackTrace();
         }
     }
 
@@ -189,16 +216,20 @@ public class Controller {
     }
 
     public void onGraficarButtonClicked(MouseEvent event) throws IOException{
-        root = FXMLLoader.load(getClass().getResource("graphics.fxml"));
+        //root = FXMLLoader.load(getClass().getResource("drawer.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("drawer.fxml"));
         //stage.initStyle(StageStyle.TRANSPARENT);
-        graphics = new Stage();
-        graphics.initStyle(StageStyle.TRANSPARENT);
+        root = loader.load();
+        drawer = new Stage();
+        drawer.initStyle(StageStyle.TRANSPARENT);
         //stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
+        Controller controller = loader.getController();
+        controller.setDrawerchart(Drawerchart);
         scene.setFill(Color.TRANSPARENT);
-        graphics.setScene(scene);
-        ResizeHelper.addResizeListener(graphics);
-        graphics.show();
+        drawer.setScene(scene);
+        ResizeHelper.addResizeListener(drawer);
+        drawer.show();
     }
 
     private void printToGraphicPane(){
@@ -250,7 +281,7 @@ public class Controller {
     public void onCrearVariableButtonClicked(MouseEvent event){
         startListeningWH();
         flowC.addFlowElement("Process","Crear variable \""+ crearVarField.getText() + "\"");
-        printToGraphicPane();;
+        printToGraphicPane();
 
     }
 
@@ -330,5 +361,37 @@ public class Controller {
         startListeningWH();
         flowC.addFlowElement("End","");
         printToGraphicPane();
+    }
+
+    //Drawer
+    public void onCloseDrawerButtonClicked(MouseEvent event){
+        //startListeningWHDrawer();
+        drawer = (Stage) closeDrawerButton.getScene().getWindow();
+        drawer.close();
+    }
+
+    private void printToDrawerPane(){
+        drawerPane.getChildren().clear();
+        /*if(Drawerchart == null){
+            System.out.println("Drawerchart null!");
+        }*/
+        List<Object> flowchart = Drawerchart.getGraphic2((int)drawerPane.getWidth(),(int)drawerPane.getHeight());
+        for (int cnt = 0; cnt < flowchart.size(); cnt++){
+            drawerPane.getChildren().add((Node)flowchart.get(cnt));
+        }
+    }
+
+    private void startListeningWHDrawer(){ //Listens to scene width an height after graphicPane is created (to draw the flowchart)
+        printToDrawerPane();
+        Scene Gscene = (Scene) closeDrawerButton.getScene();
+        Gscene.widthProperty().addListener((obs, oldVal, newVal) -> {
+            printToDrawerPane();
+            //System.out.println("Width: "+drawerPane.getWidth());
+            //System.out.println("Height: "+drawerPane.getHeight());
+        });
+
+        Gscene.heightProperty().addListener((obs, oldVal, newVal) -> {
+        });
+
     }
 }
