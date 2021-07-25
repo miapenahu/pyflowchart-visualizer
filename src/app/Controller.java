@@ -261,7 +261,6 @@ public class Controller {
         } catch(Exception e){
             System.err.println("Error al guardar: " + e);
         }
-        /**/
     }
 
     public void onGraficarButtonClicked(MouseEvent event) throws IOException{
