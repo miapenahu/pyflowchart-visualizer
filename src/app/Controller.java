@@ -182,7 +182,51 @@ public class Controller {
 
     FileChooser fileC = new FileChooser();
 
+    public String readFile(File file){
+        StringBuilder stringBuffer = new StringBuilder();
+        BufferedReader bufferedReader = null;
 
+        try {
+
+            bufferedReader = new BufferedReader(new FileReader(file));
+
+            String text;
+            while ((text = bufferedReader.readLine()) != null) {
+                stringBuffer.append(text + "\n");
+            }
+
+        } catch (FileNotFoundException ex) {
+            System.out.print("");
+        } catch (IOException ex) {
+            System.out.print("");
+        } finally {
+            try {
+                bufferedReader.close();
+            } catch (IOException ex) {
+                System.out.print("");
+            }
+        }
+
+        return stringBuffer.toString();
+    }
+
+    public void onAbrirButtonClicked(MouseEvent event) throws IOException{
+
+        //FileChooser fileC = new FileChooser();
+        fileC.setTitle("Abrir Codigo");
+
+        // Agregar filtros para facilitar la busqueda
+        fileC.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("PY", "*.py")
+        );
+
+        // Obtener archivo seleccionado
+        File txtFile = fileC.showOpenDialog(stage);
+        if (txtFile != null) {
+            editorTextArea.setText(readFile(txtFile));
+        }
+
+    }
 
     public void onGuardarButtonClicked(MouseEvent event) throws IOException{
         //fileC.setInitialDirectory(new File("C:\\"));
@@ -212,7 +256,6 @@ public class Controller {
         } catch(Exception e){
             System.err.println("Error al guardar: " + e);
         }
-        /**/
     }
 
     public void onGraficarButtonClicked(MouseEvent event) throws IOException{
