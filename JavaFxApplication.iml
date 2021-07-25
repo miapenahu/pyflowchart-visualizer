@@ -8,20 +8,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="aspectjrt" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://C:/Users/Librerias/ANTLR/antlr-4.9.2-complete.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="library" name="antlr-4.9.2-complete" level="application" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../Librerias/ANTLR/antlr-4.9.2-complete.jar!/" />
+          <root url="jar://$USER_HOME$/Documents/antlr/antlr-4.9.2-complete.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

@@ -16,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -26,10 +27,13 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import javax.swing.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Controller {
 
@@ -72,6 +76,7 @@ public class Controller {
     @FXML private Button endBlockButton;
     @FXML private TextField cntOpenWhileBlocks;
     @FXML private TextField splitsInField;
+    //@FXML private TextView ivtext;
 
     public void initialize(){
         /*editorTextArea.textProperty().addListener(new ChangeListener<String>() {
@@ -182,7 +187,51 @@ public class Controller {
 
     FileChooser fileC = new FileChooser();
 
+    public String readFile(File file){
+        StringBuilder stringBuffer = new StringBuilder();
+        BufferedReader bufferedReader = null;
 
+        try {
+
+            bufferedReader = new BufferedReader(new FileReader(file));
+
+            String text;
+            while ((text = bufferedReader.readLine()) != null) {
+                stringBuffer.append(text + "\n");
+            }
+
+        } catch (FileNotFoundException ex) {
+            System.out.print("");
+        } catch (IOException ex) {
+            System.out.print("");
+        } finally {
+            try {
+                bufferedReader.close();
+            } catch (IOException ex) {
+                System.out.print("");
+            }
+        }
+
+        return stringBuffer.toString();
+    }
+
+    public void onAbrirButtonClicked(MouseEvent event) throws IOException{
+
+        //FileChooser fileC = new FileChooser();
+        fileC.setTitle("Abrir Codigo");
+
+        // Agregar filtros para facilitar la busqueda
+        fileC.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("PY", "*.py")
+        );
+
+        // Obtener archivo seleccionado
+        File txtFile = fileC.showOpenDialog(stage);
+        if (txtFile != null) {
+            editorTextArea.setText(readFile(txtFile));
+        }
+
+    }
 
     public void onGuardarButtonClicked(MouseEvent event) throws IOException{
         //fileC.setInitialDirectory(new File("C:\\"));
