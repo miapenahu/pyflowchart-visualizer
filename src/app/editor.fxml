@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.effect.Blend?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -25,6 +27,9 @@
                      <HBox.margin>
                         <Insets top="6.0" />
                      </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
                   </ImageView>
                   <Separator prefWidth="200.0" visible="false" />
                   <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
@@ -34,22 +39,31 @@
                      <HBox.margin>
                         <Insets top="6.0" />
                      </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
                   </ImageView>
                   <Separator prefWidth="200.0" visible="false" />
-                  <ImageView fitHeight="4350.0" fitWidth="35.0" onMouseClicked="#onExitButtonClicked" pickOnBounds="true" preserveRatio="true">
+                  <ImageView cache="true" fitHeight="4350.0" fitWidth="35.0" onMouseClicked="#onExitButtonClicked" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@images/icons8_shutdown_32px_1.png" />
                      </image>
                      <HBox.margin>
                         <Insets top="6.0" />
                      </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <effect>
+                        <Blend />
+                     </effect>
                   </ImageView>
                   <Separator prefWidth="200.0" visible="false" />
                </children>
             </HBox>
          </children>
       </StackPane>
-      <AnchorPane fx:id="editorPane" layoutY="101.0" prefHeight="687.0" prefWidth="760.0" style="-fx-background-color: #291452;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0">
+      <AnchorPane fx:id="editorPane" layoutY="101.0" prefHeight="735.0" prefWidth="760.0" style="-fx-background-color: #291452;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0">
          <children>
             <TextArea fx:id="editorTextArea" prefHeight="200.0" prefWidth="200.0" style="-fx-tab-size: 4;" text="" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="120.0">
                <font>
@@ -101,6 +115,9 @@
                      <HBox.margin>
                         <Insets top="10.0" />
                      </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
                   </ImageView>
                   <ImageView fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onGuardarButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="120.0">
                      <image>
@@ -109,6 +126,9 @@
                      <HBox.margin>
                         <Insets top="10.0" />
                      </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
                   </ImageView>
                   <ImageView fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onGraficarButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="195.0">
                      <image>
@@ -117,6 +137,9 @@
                      <HBox.margin>
                         <Insets top="10.0" />
                      </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
                   </ImageView>
                </children>
             </HBox>
