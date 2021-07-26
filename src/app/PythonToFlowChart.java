@@ -4,9 +4,33 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PythonToFlowChart extends PythonParserBaseListener {
 
+    private List<FlowChart> FCList;
+    private List<String> FCnames;
     private FlowChart drawerChart = new FlowChart();
+    private FlowChart functionChart;
+
+    public List<String> getFCnames() {
+        return FCnames;
+    }
+
+    public void setFCnames(List<String> FCnames) {
+        this.FCnames = FCnames;
+    }
+
+    boolean insideFunction = false;
+
+    public List<FlowChart> getFCList() {
+        return FCList;
+    }
+
+    public void setFCList(List<FlowChart> FCList) {
+        this.FCList = FCList;
+    }
 
     public FlowChart getDrawerChart() {
         return drawerChart;
@@ -23,6 +47,8 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      */
     @Override public void enterRoot(PythonParser.RootContext ctx) {
         System.out.println("0 INICIO programa");
+        FCList = new ArrayList<>();
+        FCnames = new ArrayList<>();
     }
     /**
      * {@inheritDoc}
@@ -32,6 +58,8 @@ public class PythonToFlowChart extends PythonParserBaseListener {
     @Override public void exitRoot(PythonParser.RootContext ctx) {
         System.out.println("1 FIN programa");
         drawerChart.addFlowElement("End","");
+        FCList.add(drawerChart);
+        FCnames.add("Principal");
         //drawerChart.printFlowchartTrace();
     }
     /**
@@ -107,7 +135,11 @@ public class PythonToFlowChart extends PythonParserBaseListener {
         System.out.println("10 Entrada al IF: "+ ctx.getText());
         String[] parts = ctx.getText().split(":");
         String ans = parts[0].substring(2,parts[0].length());
-        drawerChart.addFlowElement("Decision","Si "+ ans);
+        if(!insideFunction) {
+            drawerChart.addFlowElement("Decision", "Si " + ans);
+        } else {
+            functionChart.addFlowElement("Decision", "Si " + ans);
+        }
         //flowC.setWritingBranch(1); //True
     }
     /**
@@ -117,7 +149,11 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      */
     @Override public void exitIf_stmt(PythonParser.If_stmtContext ctx) {
         System.out.println("11 Salida del IF");
-        drawerChart.addFlowElement("Merge","");
+        if(!insideFunction) {
+            drawerChart.addFlowElement("Merge", "");
+        } else{
+            functionChart.addFlowElement("Merge", "");
+        }
     }
     /**
      * {@inheritDoc}
@@ -189,7 +225,13 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterClass_or_func_def_stmt(PythonParser.Class_or_func_def_stmtContext ctx) {
-        System.out.println("20");
+        System.out.println("20 Entrada Declaracion Funcion: "+ctx.getText());
+        functionChart = new FlowChart();
+        System.out.println("ctx name function: "+ ctx.funcdef().name().getText());
+
+        //functionChart.addFlowElement("Process","Entrar en función \""+ctx.funcdef().name().getText()+"\"");
+        drawerChart.addFlowElement("Process","Definición función \""+ctx.funcdef().name().getText()+"\"");
+        insideFunction = true;
     }
     /**
      * {@inheritDoc}
@@ -197,7 +239,11 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitClass_or_func_def_stmt(PythonParser.Class_or_func_def_stmtContext ctx) {
-        System.out.println("21");
+        System.out.println("21 Salida Declaracion Funcion");
+        functionChart.addFlowElement("End","");
+        FCList.add(functionChart);
+        FCnames.add("Función "+ ctx.funcdef().name().getText());
+        insideFunction = false;
     }
     /**
      * {@inheritDoc}
@@ -263,6 +309,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      */
     @Override public void exitElse_clause(PythonParser.Else_clauseContext ctx) {
         System.out.println("29 Salida ELSE");
+        drawerChart.setWritingBranch(1); //True
     }
     /**
      * {@inheritDoc}
@@ -464,9 +511,17 @@ public class PythonToFlowChart extends PythonParserBaseListener {
     @Override public void enterExpr_stmt(PythonParser.Expr_stmtContext ctx) {
         System.out.println("54 Entrada declaración expresión: " + ctx.getText());
         if(ctx.getText().contains("print")){
-            drawerChart.addFlowElement("IO",ctx.getText());
+            if(!insideFunction) {
+                drawerChart.addFlowElement("IO", ctx.getText());
+            } else {
+                functionChart.addFlowElement("IO", ctx.getText());
+            }
         } else if(ctx.getText().contains("=")){
-            drawerChart.addFlowElement("Process",ctx.getText());
+            if(!insideFunction) {
+                drawerChart.addFlowElement("Process", ctx.getText());
+            } else{
+                functionChart.addFlowElement("Process", ctx.getText());
+            }
         }
     }
     /**
