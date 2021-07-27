@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.effect.Blend?>
+<?import javafx.scene.effect.Bloom?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -63,7 +64,7 @@
             </HBox>
          </children>
       </StackPane>
-      <AnchorPane fx:id="editorPane" layoutY="101.0" prefHeight="735.0" prefWidth="760.0" style="-fx-background-color: #291452;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0">
+      <AnchorPane fx:id="editorPane" accessibleRole="BUTTON" layoutY="101.0" prefHeight="735.0" prefWidth="760.0" style="-fx-background-color: #291452;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0">
          <children>
             <TextArea fx:id="editorTextArea" prefHeight="200.0" prefWidth="200.0" style="-fx-tab-size: 4;" text="" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="120.0">
                <font>
@@ -116,9 +117,13 @@
                         <Insets top="10.0" />
                      </HBox.margin>
                      <cursor>
-                        <Cursor fx:constant="HAND" />
+                        <Cursor fx:constant="HAND"/>
                      </cursor>
+                     <effect>
+                        <Bloom />
+                     </effect>
                   </ImageView>
+
                   <ImageView fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onGuardarButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="120.0">
                      <image>
                         <Image url="@images/icons8_save_32px.png" />
@@ -129,7 +134,11 @@
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
+                     <effect>
+                        <Bloom />
+                     </effect>
                   </ImageView>
+
                   <ImageView fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onGraficarButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="195.0">
                      <image>
                         <Image url="@images/icons8_project_diagram_32px_1.png" />
@@ -140,6 +149,9 @@
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
+                     <effect>
+                        <Bloom />
+                     </effect>
                   </ImageView>
                </children>
             </HBox>
