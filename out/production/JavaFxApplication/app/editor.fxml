@@ -31,6 +31,9 @@
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
+                     <effect>
+                        <Bloom />
+                     </effect>
                   </ImageView>
                   <Separator prefWidth="200.0" visible="false" />
                   <ImageView fitHeight="35.0" fitWidth="35.0" onMouseClicked="#onSimulatorButtonClicked" pickOnBounds="true" preserveRatio="true">
@@ -43,6 +46,9 @@
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
+                     <effect>
+                        <Bloom threshold="0.96" />
+                     </effect>
                   </ImageView>
                   <Separator prefWidth="200.0" visible="false" />
                   <ImageView cache="true" fitHeight="4350.0" fitWidth="35.0" onMouseClicked="#onExitButtonClicked" pickOnBounds="true" preserveRatio="true">
@@ -70,6 +76,9 @@
                <font>
                   <Font name="Courier New" size="15.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="TEXT" />
+               </cursor>
             </TextArea>
             <StackPane layoutY="15.0" prefHeight="30.0" prefWidth="350.0">
                <children>
@@ -117,10 +126,10 @@
                         <Insets top="10.0" />
                      </HBox.margin>
                      <cursor>
-                        <Cursor fx:constant="HAND"/>
+                        <Cursor fx:constant="HAND" />
                      </cursor>
                      <effect>
-                        <Bloom />
+                        <Bloom threshold="0.0" />
                      </effect>
                   </ImageView>
 
@@ -135,7 +144,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                      <effect>
-                        <Bloom />
+                        <Bloom threshold="0.0" />
                      </effect>
                   </ImageView>
 
