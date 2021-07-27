@@ -35,7 +35,7 @@
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <ImageView fx:id="closeDrawerButton" fitHeight="25.0" fitWidth="200.0" layoutX="100.0" onMouseClicked="#onCloseDrawerButtonClicked" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="8.0">
+      <ImageView fx:id="closeDrawerButton" blendMode="RED" fitHeight="25.0" fitWidth="200.0" layoutX="100.0" onMouseClicked="#onCloseDrawerButtonClicked" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="8.0">
          <image>
             <Image url="@images/icons8_shutdown_32px_1.png" />
          </image>
