@@ -43,7 +43,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
          <effect>
-            <Bloom />
+            <Bloom threshold="1.0" />
          </effect>
       </ImageView>
    </children>

@@ -21,7 +21,7 @@
             <HBox prefHeight="61.0" prefWidth="404.0">
                <children>
                   <Separator prefWidth="200.0" visible="false" />
-                  <ImageView blendMode="GREEN" fitHeight="35.0" fitWidth="35.0" onMouseClicked="#onEditorButtonClicked" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="editorButton" fitHeight="35.0" fitWidth="35.0" onMouseClicked="#onEditorButtonClicked" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@images/icons8_edit_file_32px_4.png" />
                      </image>
@@ -32,11 +32,11 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                      <effect>
-                        <Bloom />
+                        <Bloom threshold="1.0" />
                      </effect>
                   </ImageView>
                   <Separator prefWidth="200.0" visible="false" />
-                  <ImageView blendMode="GREEN" fitHeight="35.0" fitWidth="35.0" onMouseClicked="#onSimulatorButtonClicked" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="simulatorButton" fitHeight="35.0" fitWidth="35.0" onMouseClicked="#onSimulatorButtonClicked" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@images/icons8_flow_chart_32px_1.png" />
                      </image>
@@ -47,11 +47,11 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                      <effect>
-                        <Bloom threshold="0.96" />
+                        <Bloom threshold="1.0" />
                      </effect>
                   </ImageView>
                   <Separator prefWidth="200.0" visible="false" />
-                  <ImageView blendMode="RED" cache="true" fitHeight="4350.0" fitWidth="35.0" onMouseClicked="#onExitButtonClicked" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="exitButton" blendMode="RED" cache="true" fitHeight="4350.0" fitWidth="35.0" onMouseClicked="#onExitButtonClicked" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@images/icons8_shutdown_32px_1.png" />
                      </image>
@@ -72,7 +72,7 @@
       </StackPane>
       <AnchorPane fx:id="editorPane" accessibleRole="BUTTON" layoutY="101.0" prefHeight="735.0" prefWidth="760.0" style="-fx-background-color: #291452;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0">
          <children>
-            <TextArea fx:id="editorTextArea" blendMode="EXCLUSION" prefHeight="200.0" prefWidth="200.0" style="-fx-tab-size: 4;" text="" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="120.0">
+            <TextArea fx:id="editorTextArea" prefHeight="200.0" prefWidth="200.0" style="-fx-tab-size: 4;" text="" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="120.0">
                <cursor>
                   <Cursor fx:constant="TEXT" />
                </cursor>
@@ -118,7 +118,7 @@
             </StackPane>
             <HBox prefHeight="55.0" prefWidth="399.0" AnchorPane.bottomAnchor="640.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="400.0" AnchorPane.topAnchor="40.0">
                <children>
-                  <ImageView blendMode="GREEN" fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onAbrirButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="42.0">
+                  <ImageView fx:id="loadButton" fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onAbrirButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="42.0">
                      <image>
                         <Image url="@images/icons8_opened_folder_32px.png" />
                      </image>
@@ -129,11 +129,11 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                      <effect>
-                        <Bloom threshold="0.0" />
+                        <Bloom threshold="1.0" />
                      </effect>
                   </ImageView>
 
-                  <ImageView blendMode="GREEN" fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onGuardarButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="120.0">
+                  <ImageView fx:id="saveButton" fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onGuardarButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="120.0">
                      <image>
                         <Image url="@images/icons8_save_32px.png" />
                      </image>
@@ -144,11 +144,11 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                      <effect>
-                        <Bloom threshold="0.0" />
+                        <Bloom threshold="1.0" />
                      </effect>
                   </ImageView>
 
-                  <ImageView blendMode="GREEN" fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onGraficarButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="195.0">
+                  <ImageView fx:id="drawButton" fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onGraficarButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="195.0">
                      <image>
                         <Image url="@images/icons8_project_diagram_32px_1.png" />
                      </image>
@@ -159,11 +159,16 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                      <effect>
-                        <Bloom />
+                        <Bloom threshold="1.0" />
                      </effect>
                   </ImageView>
                </children>
             </HBox>
+            <ImageView fx:id="debugButton" fitHeight="33.0" fitWidth="33.0" layoutX="720.0" layoutY="695.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/bug.png" />
+               </image>
+            </ImageView>
          </children>
       </AnchorPane>
       <ImageView fx:id="editorArrow" fitHeight="15.0" fitWidth="35.0" layoutX="50.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">

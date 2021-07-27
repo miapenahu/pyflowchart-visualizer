@@ -12,12 +12,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.Bloom;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -28,14 +28,11 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import javax.swing.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Controller {
 
@@ -68,12 +65,19 @@ public class Controller {
     private int openWhileBlocks = 0;
     //editor.fxml
     @FXML private TextArea editorTextArea;
+    @FXML private ImageView editorButton;
+    @FXML private ImageView simulatorButton;
+    @FXML private ImageView exitButton;
+    @FXML private ImageView loadButton;
+    @FXML private ImageView saveButton;
+    @FXML private ImageView drawButton;
+    @FXML private ImageView debugButton;
     //graphics.fxml
     @FXML private AnchorPane editorPane;
     @FXML private ImageView editorArrow;
     @FXML private ImageView builderArrow;
     @FXML private Pane graphicPane;
-    @FXML private ImageView closeGraphicsButton;
+    @FXML private ImageView closeSimulatorButton;
     //Drawer
     @FXML private Label drawerLabel;
     @FXML private Pane drawerPane;
@@ -100,6 +104,10 @@ public class Controller {
                 test();
             }
         });*/
+
+        initEditor();
+        initSimulator();
+
         if(editorTextArea != null) {
             PauseTransition pause = new PauseTransition(Duration.seconds(1));
             editorTextArea.textProperty().addListener(
@@ -116,6 +124,22 @@ public class Controller {
                         pause.playFromStart();
                     });
 
+        }
+    }
+
+    public void setButtonListener(ImageView button){
+        Bloom bloom1 = new Bloom();
+        bloom1.setThreshold(0.1);
+
+        Bloom bloom2 = new Bloom();
+        bloom2.setThreshold(1.0);
+
+        if(button != null){
+            button.hoverProperty().addListener(
+                    (observable, oldValue, newValue) -> {
+                        if(newValue) { button.setEffect(bloom1);
+                        } else { button.setEffect(bloom2); }
+                    });
         }
     }
 
@@ -181,6 +205,16 @@ public class Controller {
             System.err.println("Error (Test): "); //+ e);
             e.printStackTrace();
         }
+    }
+
+    public void initEditor(){
+        setButtonListener(editorButton);
+        setButtonListener(simulatorButton);
+        setButtonListener(exitButton);
+        setButtonListener(loadButton);
+        setButtonListener(saveButton);
+        setButtonListener(drawButton);
+        setButtonListener(debugButton);
     }
 
     public void switchToMenu(MouseEvent event) throws IOException {
@@ -346,6 +380,10 @@ public class Controller {
 
     //-----------------------------------Simulator buttons---------------------------------//
 
+    private void initSimulator(){
+        setButtonListener(closeSimulatorButton);
+    }
+
     private void printToGraphicPane(){
         graphicPane.getChildren().clear();
         List<Object> flowchart = flowC.getGraphic2((int)graphicPane.getWidth(),(int)graphicPane.getHeight());
@@ -355,7 +393,7 @@ public class Controller {
     }
 
     private void startListeningWH(){ //Listens to scene width an height after graphicPane is created (to draw the flowchart)
-        Scene Gscene = (Scene) closeGraphicsButton.getScene();
+        Scene Gscene = (Scene) closeSimulatorButton.getScene();
         Gscene.widthProperty().addListener((obs, oldVal, newVal) -> {
             printToGraphicPane();
         });
@@ -365,8 +403,8 @@ public class Controller {
 
     }
 
-    public void onCloseGraphicsButtonClicked(MouseEvent event){
-        simulator = (Stage) closeGraphicsButton.getScene().getWindow();
+    public void onCloseSimulatorButtonClicked(MouseEvent event){
+        simulator = (Stage) closeSimulatorButton.getScene().getWindow();
         simulator.close();
     }
 
@@ -470,6 +508,7 @@ public class Controller {
     //-----------------------------------Drawer buttons------------------------------------//
 
     public void initDrawer(){
+        setButtonListener(closeDrawerButton);
         drawerLabel.setText(WindowName);
         startListeningWHDrawer();
     }

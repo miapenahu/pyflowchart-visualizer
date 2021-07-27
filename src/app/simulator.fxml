@@ -142,7 +142,7 @@
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <ImageView fx:id="closeGraphicsButton" fitHeight="25.0" fitWidth="200.0" layoutX="115.0" layoutY="10.0" onMouseClicked="#onCloseGraphicsButtonClicked" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+      <ImageView fx:id="closeSimulatorButton" blendMode="RED" fitHeight="25.0" fitWidth="200.0" layoutX="115.0" layoutY="10.0" onMouseClicked="#onCloseSimulatorButtonClicked" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
          <image>
             <Image url="@images/icons8_shutdown_32px_1.png" />
          </image>
