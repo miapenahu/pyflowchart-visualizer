@@ -177,7 +177,13 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterFor_stmt(PythonParser.For_stmtContext ctx) {
-        System.out.println("14");
+        System.out.println("14 Entrada for loop");
+        String str = "Para " + ctx.exprlist().getText() + " en " + ctx.testlist().getText();
+        if(!insideFunction) {
+            drawerChart.addFlowElement("Loop",str);
+        } else{
+            functionChart.addFlowElement("Loop",str);
+        }
     }
     /**
      * {@inheritDoc}
@@ -185,7 +191,12 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitFor_stmt(PythonParser.For_stmtContext ctx) {
-        System.out.println("15");
+        System.out.println("15 Salida for loop");
+        if(!insideFunction) {
+            drawerChart.addFlowElement("EndLoop","");
+        } else{
+            functionChart.addFlowElement("EndLoop","");
+        }
     }
     /**
      * {@inheritDoc}
@@ -225,7 +236,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterClass_or_func_def_stmt(PythonParser.Class_or_func_def_stmtContext ctx) {
-        System.out.println("20 Entrada Declaracion Funcion: "+ctx.getText());
+        System.out.println("20 Entrada Declaracion Funcion o clase: "+ctx.getText());
         functionChart = new FlowChart();
         System.out.println("ctx name function: "+ ctx.funcdef().name().getText());
 
@@ -239,7 +250,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitClass_or_func_def_stmt(PythonParser.Class_or_func_def_stmtContext ctx) {
-        System.out.println("21 Salida Declaracion Funcion");
+        System.out.println("21 Salida Declaracion Funcion o clase");
         functionChart.addFlowElement("End","");
         FCList.add(functionChart);
         FCnames.add("Función "+ ctx.funcdef().name().getText());
@@ -381,7 +392,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterFuncdef(PythonParser.FuncdefContext ctx) {
-        System.out.println("38");
+        System.out.println("38 Entrada definición funcion: "+ctx.name().getText());
     }
     /**
      * {@inheritDoc}
@@ -389,7 +400,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitFuncdef(PythonParser.FuncdefContext ctx) {
-        System.out.println("39");
+        System.out.println("39 Salida definición funcion");
     }
     /**
      * {@inheritDoc}
@@ -618,7 +629,12 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterReturn_stmt(PythonParser.Return_stmtContext ctx) {
-        System.out.println("66");
+        System.out.println("66 Entrada return");
+        if(!insideFunction){
+            drawerChart.addFlowElement("KeyProcess","Retornar "+ctx.testlist().getText());
+        } else {
+            functionChart.addFlowElement("KeyProcess","Retornar "+ctx.testlist().getText());
+        }
     }
     /**
      * {@inheritDoc}
@@ -626,7 +642,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitReturn_stmt(PythonParser.Return_stmtContext ctx) {
-        System.out.println("67");
+        System.out.println("67 Salida return");
     }
     /**
      * {@inheritDoc}

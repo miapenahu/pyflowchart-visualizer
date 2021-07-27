@@ -269,7 +269,7 @@ public class Controller {
 
         // Agregar filtros para facilitar la busqueda
         fileC.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("PY", "*.py")
+                new FileChooser.ExtensionFilter("Python script", "*.py")
         );
 
         // Obtener archivo seleccionado

@@ -739,7 +739,7 @@ public class FlowChart {
         int actualYmax = 0;
         int LoopLineSpc = XSpaceObj/2;
         parentDecision.add(-1); //Intial branch
-        boolean flagMerge = false, openTrueBlock = false;
+        boolean flagMerge = false, openTrueBlock = false, openEndLoop = false;
         List<Object> elements = new ArrayList<Object>();
         List<Integer> xlay = getXLayout(w,widthObj,XSpaceObj), loopReturn = new ArrayList<>();
         int ylay[] = new int[xlay.size()+2]; //n+1 spaces for n splits, plus initalYlayout in last position
@@ -774,7 +774,7 @@ public class FlowChart {
             FlowElement elem = this.flowchart.get(i);
             System.out.print(",branch: "+elem.getBranch()+",block: "+elem.getBlock());
             System.out.print(", parDec:"+parentDecision);
-            if(elem.getElementType().equals("Process")){
+            if(elem.getElementType().contains("Process")){
                 int clay[] = {0,0,0,0};
                 System.out.print(", type: Process");
                 if(elem.getBranch() != -1){
@@ -799,8 +799,9 @@ public class FlowChart {
                     flagMerge = false;
                     elements.add(drawDownLine(actualX,actualY,YSpaceObj/2));
                 } else{
-                    if(openTrueBlock && elem.getBlock() == 0){
+                    if(openTrueBlock && (elem.getBlock() == 0 || openEndLoop)){
                         openTrueBlock = false;
+                        openEndLoop = false;
                         elements.add(drawLoopLines(actualX,actualY-YSpaceObj,LoopLineSpc,widthObj,heightObj,loopReturn.get(loopReturn.size()-1),YSpaceObj));
                         elements.add(drawDownLine(actualX,actualY,YSpaceObj/2));
                     } else {
@@ -812,7 +813,11 @@ public class FlowChart {
                 widthObj = 150;
                 Rectangle process = new Rectangle(actualX - widthObj/2,actualY,widthObj,heightObj);
                 process.setStroke(Color.BLACK);
-                process.setFill(Color.LIGHTBLUE);
+                if(elem.getElementType().contains("Key")){
+                    process.setFill(Color.LIGHTPINK);
+                } else {
+                    process.setFill(Color.LIGHTBLUE);
+                }
                 process.setBlendMode(BlendMode.SRC_ATOP);
                 elements.add(process);
                 List<Object> processText = fitText(actualX,actualY,widthObj,heightObj,elem.getTextStr(),fontSize);
@@ -856,7 +861,8 @@ public class FlowChart {
                     flagMerge = false;
                     elements.add(drawDownLine(actualX,actualY,YSpaceObj/2));
                 } else{
-                    if(openTrueBlock && elem.getBlock() == 0){
+                    if(openTrueBlock && (elem.getBlock() == 0 || openEndLoop)){
+                        openEndLoop = false;
                         elements.add(drawLoopLines(actualX,actualY-YSpaceObj,LoopLineSpc,widthObj,heightObj,loopReturn.get(loopReturn.size()-1),YSpaceObj));
                         elements.add(drawDownLine(actualX,actualY,YSpaceObj/2));
                     } else {
@@ -903,11 +909,14 @@ public class FlowChart {
                 }
             } else if(elem.getElementType().equals("EndLoop")) {
                 System.out.print(", type: EndLoop");
-                LoopLineSpc += 3;
-                loopReturn.remove(loopReturn.size()-1);
-                if(getOpenLoops() > 0){
-                    openTrueBlock = true;
+                openEndLoop = true;
+                if(!openTrueBlock){
+                    loopReturn.remove(loopReturn.size()-1);
+                    LoopLineSpc += 3;
                 }
+                //if(getOpenLoops() > 0){
+                    openTrueBlock = true;
+                //}
             }else if(elem.getElementType().equals("IO")) {
                 int clay[] = {0,0,0,0};
                 System.out.print(", type: IO");
@@ -933,7 +942,14 @@ public class FlowChart {
                     flagMerge = false;
                     elements.add(drawDownLine(actualX,actualY,YSpaceObj/2));
                 } else{
-                    elements.add(drawDownLine(actualX,actualY,YSpaceObj));
+                    if(openTrueBlock && (elem.getBlock() == 0 || openEndLoop)){
+                        openTrueBlock = false;
+                        openEndLoop = false;
+                        elements.add(drawLoopLines(actualX,actualY-YSpaceObj,LoopLineSpc,widthObj,heightObj,loopReturn.get(loopReturn.size()-1),YSpaceObj));
+                        elements.add(drawDownLine(actualX,actualY,YSpaceObj/2));
+                    } else {
+                        elements.add(drawDownLine(actualX,actualY,YSpaceObj));
+                    }
                 }
                 fontSize = 15;
                 widthObj = 150;
@@ -993,8 +1009,9 @@ public class FlowChart {
                         flagMerge = false;
                         elements.add(drawDownLine(actualX,actualY,YSpaceObj/2));
                     } else{
-                        if(openTrueBlock && elem.getBlock() == 0){
+                        if(openTrueBlock && (elem.getBlock() == 0 || openEndLoop)){
                             openTrueBlock = false;
+                            openEndLoop = false;
                             elements.add(drawLoopLines(actualX,actualY-YSpaceObj,LoopLineSpc,widthObj,heightObj,loopReturn.get(loopReturn.size()-1),YSpaceObj));
                             elements.add(drawDownLine(actualX,actualY,YSpaceObj/2));
                         } else {
@@ -1050,8 +1067,9 @@ public class FlowChart {
                     flagMerge = false;
                     elements.add(drawDownLine(actualX,actualY,YSpaceObj/2));
                 } else{
-                    if(openTrueBlock && elem.getBlock() == 0){
+                    if(openTrueBlock && (elem.getBlock() == 0 || openEndLoop)){
                         openTrueBlock = false;
+                        openEndLoop = false;
                         elements.add(drawLoopLines(actualX,actualY-YSpaceObj,LoopLineSpc,widthObj,heightObj,loopReturn.get(loopReturn.size()-1),YSpaceObj));
                         elements.add(drawDownLine(actualX,actualY,YSpaceObj/2));
                     } else {
