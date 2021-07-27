@@ -21,7 +21,7 @@
             <HBox prefHeight="61.0" prefWidth="404.0">
                <children>
                   <Separator prefWidth="200.0" visible="false" />
-                  <ImageView fitHeight="35.0" fitWidth="35.0" onMouseClicked="#onEditorButtonClicked" pickOnBounds="true" preserveRatio="true">
+                  <ImageView blendMode="GREEN" fitHeight="35.0" fitWidth="35.0" onMouseClicked="#onEditorButtonClicked" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@images/icons8_edit_file_32px_4.png" />
                      </image>
@@ -36,7 +36,7 @@
                      </effect>
                   </ImageView>
                   <Separator prefWidth="200.0" visible="false" />
-                  <ImageView fitHeight="35.0" fitWidth="35.0" onMouseClicked="#onSimulatorButtonClicked" pickOnBounds="true" preserveRatio="true">
+                  <ImageView blendMode="GREEN" fitHeight="35.0" fitWidth="35.0" onMouseClicked="#onSimulatorButtonClicked" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@images/icons8_flow_chart_32px_1.png" />
                      </image>
@@ -51,7 +51,7 @@
                      </effect>
                   </ImageView>
                   <Separator prefWidth="200.0" visible="false" />
-                  <ImageView cache="true" fitHeight="4350.0" fitWidth="35.0" onMouseClicked="#onExitButtonClicked" pickOnBounds="true" preserveRatio="true">
+                  <ImageView blendMode="RED" cache="true" fitHeight="4350.0" fitWidth="35.0" onMouseClicked="#onExitButtonClicked" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@images/icons8_shutdown_32px_1.png" />
                      </image>
@@ -72,13 +72,13 @@
       </StackPane>
       <AnchorPane fx:id="editorPane" accessibleRole="BUTTON" layoutY="101.0" prefHeight="735.0" prefWidth="760.0" style="-fx-background-color: #291452;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0">
          <children>
-            <TextArea fx:id="editorTextArea" prefHeight="200.0" prefWidth="200.0" style="-fx-tab-size: 4;" text="" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="120.0">
-               <font>
-                  <Font name="Courier New" size="15.0" />
-               </font>
+            <TextArea fx:id="editorTextArea" blendMode="EXCLUSION" prefHeight="200.0" prefWidth="200.0" style="-fx-tab-size: 4;" text="" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="120.0">
                <cursor>
                   <Cursor fx:constant="TEXT" />
                </cursor>
+               <font>
+                  <Font name="Consolas Bold" size="18.0" />
+               </font>
             </TextArea>
             <StackPane layoutY="15.0" prefHeight="30.0" prefWidth="350.0">
                <children>
@@ -118,7 +118,7 @@
             </StackPane>
             <HBox prefHeight="55.0" prefWidth="399.0" AnchorPane.bottomAnchor="640.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="400.0" AnchorPane.topAnchor="40.0">
                <children>
-                  <ImageView fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onAbrirButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="42.0">
+                  <ImageView blendMode="GREEN" fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onAbrirButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="42.0">
                      <image>
                         <Image url="@images/icons8_opened_folder_32px.png" />
                      </image>
@@ -133,7 +133,7 @@
                      </effect>
                   </ImageView>
 
-                  <ImageView fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onGuardarButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="120.0">
+                  <ImageView blendMode="GREEN" fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onGuardarButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="120.0">
                      <image>
                         <Image url="@images/icons8_save_32px.png" />
                      </image>
@@ -148,7 +148,7 @@
                      </effect>
                   </ImageView>
 
-                  <ImageView fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onGraficarButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="195.0">
+                  <ImageView blendMode="GREEN" fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onGraficarButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="195.0">
                      <image>
                         <Image url="@images/icons8_project_diagram_32px_1.png" />
                      </image>
