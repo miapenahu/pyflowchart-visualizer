@@ -20,7 +20,7 @@
             <HBox prefHeight="61.0" prefWidth="404.0">
                <children>
                   <Separator prefWidth="200.0" visible="false" />
-                  <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="35.0" fitWidth="35.0" onMouseClicked="#onEditorButtonClicked" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@images/icons8_edit_file_32px_4.png" />
                      </image>
@@ -32,7 +32,7 @@
                      </cursor>
                   </ImageView>
                   <Separator prefWidth="200.0" visible="false" />
-                  <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="35.0" fitWidth="35.0" onMouseClicked="#onSimulatorButtonClicked" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@images/icons8_flow_chart_32px_1.png" />
                      </image>

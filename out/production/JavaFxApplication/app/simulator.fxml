@@ -137,12 +137,12 @@
             </VBox>
          </left>
       </BorderPane>
-      <Label layoutX="18.0" layoutY="12.0" text="Simulations" textFill="WHITE">
+      <Label layoutX="40.0" layoutY="12.0" text="Simulations" textFill="WHITE">
          <font>
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <ImageView fx:id="closeGraphicsButton" fitHeight="25.0" fitWidth="200.0" layoutX="115.0" layoutY="10.0" onMouseClicked="#onCloseGraphicsButtonClicked" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="10.0">
+      <ImageView fx:id="closeGraphicsButton" fitHeight="25.0" fitWidth="200.0" layoutX="115.0" layoutY="10.0" onMouseClicked="#onCloseGraphicsButtonClicked" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
          <image>
             <Image url="@images/icons8_shutdown_32px_1.png" />
          </image>

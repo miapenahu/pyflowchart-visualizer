@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -30,6 +31,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import javax.swing.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,11 +40,21 @@ import java.util.logging.Logger;
 public class Controller {
 
     private FlowChart flowC = new FlowChart();
-    InputStream stream;
+    private List<FlowChart> FCList = new ArrayList<>();
+    private List<String> FCnames = new ArrayList<>();
     private FlowChart Drawerchart; // = new FlowChart();
+    private String WindowName;
+
+    public String getWindowName() {
+        return WindowName;
+    }
+
+    public void setWindowName(String windowName) {
+        WindowName = windowName;
+    }
 
     private Stage stage;
-    private Stage graphics;
+    private Stage simulator;
     private Stage drawer;
     private Scene scene;
     private Parent root;
@@ -63,6 +75,7 @@ public class Controller {
     @FXML private Pane graphicPane;
     @FXML private ImageView closeGraphicsButton;
     //Drawer
+    @FXML private Label drawerLabel;
     @FXML private Pane drawerPane;
     @FXML private ImageView closeDrawerButton;
     //Text fields to complement flowchart
@@ -99,13 +112,14 @@ public class Controller {
             PauseTransition pause = new PauseTransition(Duration.seconds(1));
             drawerPane.widthProperty().addListener(
                     (observable, oldValue, newValue) -> {
-                        pause.setOnFinished(event -> startListeningWHDrawer());//doSomething(newValue));
+                        pause.setOnFinished(event -> initDrawer());//doSomething(newValue));
                         pause.playFromStart();
                     });
 
         }
     }
 
+    //-----------------------------------Editor buttons------------------------------------//
     public void analizeGrammar(){
         try{
             // create a CharStream that reads from standard input
@@ -116,7 +130,7 @@ public class Controller {
             //if (args.length>0)
             //    lexer = new PythonLexer(CharStreams.fromFileName(args[0]));
             //else
-            stream = new ByteArrayInputStream(editorTextArea.getText().getBytes(StandardCharsets.UTF_8));
+            InputStream stream = new ByteArrayInputStream(editorTextArea.getText().getBytes(StandardCharsets.UTF_8));
             lexer = new PythonLexer(CharStreams.fromStream(stream));
             // create a buffer of tokens pulled from the lexer
             CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -140,6 +154,18 @@ public class Controller {
                 //System.out.println("pyflow isnt null!");
                 pyflow.getDrawerChart().printFlowchartTrace();
             }*/
+            FCList = new ArrayList<>();
+
+            for(FlowChart elem : pyflow.getFCList()){
+                FCList.add(elem);
+            }
+            FCnames = new ArrayList<>();
+            for(String elem : pyflow.getFCnames()){
+                FCnames.add(elem);
+                System.out.println("FCname: "+ elem);
+            }
+            System.out.println("FCList size: "+FCList.size());
+            System.out.println("FCnames size: "+FCList.size());
             Drawerchart = new FlowChart(pyflow.getDrawerChart());
             /*if(Drawerchart == null){
                 System.out.println("Drawchart is null!");
@@ -152,8 +178,8 @@ public class Controller {
         } catch (Exception e){
             //System.out.println("Bad code :(");
             editorTextArea.setStyle("-fx-text-fill: red");
-            System.err.println("Error (Test): "+ e);
-            //e.printStackTrace();
+            System.err.println("Error (Test): "); //+ e);
+            e.printStackTrace();
         }
     }
 
@@ -183,6 +209,32 @@ public class Controller {
         scene.setFill(Color.TRANSPARENT);
         stage.setScene(scene);
         stage.show();
+    }
+
+    //Upper menu buttons
+    public void onEditorButtonClicked(MouseEvent event){
+        if(editorPane.isVisible()){
+            editorArrow.setVisible(false);
+            editorPane.setVisible(false);
+        } else{
+            editorArrow.setVisible(true);
+            editorPane.setVisible(true);
+        }
+        builderArrow.setVisible(false);
+    }
+
+    public void onSimulatorButtonClicked(MouseEvent event) throws IOException{
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("simulator.fxml"));
+        //stage.initStyle(StageStyle.TRANSPARENT);
+        root = loader.load();
+        simulator = new Stage();
+        simulator.initStyle(StageStyle.TRANSPARENT);
+        //stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
+        simulator.setScene(scene);
+        ResizeHelper.addResizeListener(simulator);
+        simulator.show();
     }
 
     FileChooser fileC = new FileChooser();
@@ -222,13 +274,14 @@ public class Controller {
 
         // Agregar filtros para facilitar la busqueda
         fileC.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("PY", "*.py")
+                new FileChooser.ExtensionFilter("Python script", "*.py")
         );
 
         // Obtener archivo seleccionado
         File txtFile = fileC.showOpenDialog(stage);
         if (txtFile != null) {
             editorTextArea.setText(readFile(txtFile));
+            fileC.setInitialDirectory(txtFile.getParentFile());
         }
 
     }
@@ -265,20 +318,33 @@ public class Controller {
 
     public void onGraficarButtonClicked(MouseEvent event) throws IOException{
         //root = FXMLLoader.load(getClass().getResource("drawer.fxml"));
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("drawer.fxml"));
-        //stage.initStyle(StageStyle.TRANSPARENT);
-        root = loader.load();
-        drawer = new Stage();
-        drawer.initStyle(StageStyle.TRANSPARENT);
-        //stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        Controller controller = loader.getController();
-        controller.setDrawerchart(Drawerchart);
-        scene.setFill(Color.TRANSPARENT);
-        drawer.setScene(scene);
-        ResizeHelper.addResizeListener(drawer);
-        drawer.show();
+        //for(FlowChart elem : FCList){
+        for(int elem = 0; elem < FCList.size();elem++){
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("drawer.fxml"));
+            //stage.initStyle(StageStyle.TRANSPARENT);
+            root = loader.load();
+            drawer = new Stage();
+            drawer.initStyle(StageStyle.TRANSPARENT);
+            //stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            Controller controller = loader.getController();
+            controller.setDrawerchart(FCList.get(elem));
+            controller.setWindowName(FCnames.get(elem));
+            scene.setFill(Color.TRANSPARENT);
+            drawer.setScene(scene);
+            ResizeHelper.addResizeListener(drawer);
+            drawer.show();
+        }
+
     }
+
+    public void onExitButtonClicked(MouseEvent event){
+        Platform.exit();
+        System.exit(0);
+    }
+    //-------------------------------------------------------------------------------------//
+
+    //-----------------------------------Simulator buttons---------------------------------//
 
     private void printToGraphicPane(){
         graphicPane.getChildren().clear();
@@ -299,25 +365,9 @@ public class Controller {
 
     }
 
-    public void onEditorButtonClicked(MouseEvent event){
-        if(editorPane.isVisible()){
-            editorArrow.setVisible(false);
-            editorPane.setVisible(false);
-        } else{
-            editorArrow.setVisible(true);
-            editorPane.setVisible(true);
-        }
-        builderArrow.setVisible(false);
-    }
-
     public void onCloseGraphicsButtonClicked(MouseEvent event){
-        graphics = (Stage) closeGraphicsButton.getScene().getWindow();
-        graphics.close();
-    }
-
-    public void onExitButtonClicked(MouseEvent event){
-        Platform.exit();
-        System.exit(0);
+        simulator = (Stage) closeGraphicsButton.getScene().getWindow();
+        simulator.close();
     }
 
     public void onPrintButtonClicked(MouseEvent event){
@@ -368,8 +418,9 @@ public class Controller {
     }
 
     public void onWhileButtonClicked(MouseEvent event){
-        graphicPane.getChildren().clear();
-        flowC.addFlowElement("Loop","¿"+ ifField.getText() + "?");
+        startListeningWH();
+        flowC.addFlowElement("Loop","¿"+ whileField.getText() + "?");
+        printToGraphicPane();
         cntOpenWhileBlocks.setText(""+flowC.getOpenLoops());
         whileTrueFalseButton.setText("true");
     }
@@ -384,6 +435,10 @@ public class Controller {
             cntOpenWhileBlocks.setText(""+flowC.getOpenLoops());
             if(flowC.getOpenLoops() == 0){
                 whileTrueFalseButton.setText("none");
+            } else{
+                whileTrueFalseButton.setText("true");
+                endBlockButton.setText("end block");
+                flowC.setWritingBlock(1);
             }
         }
     }
@@ -410,8 +465,15 @@ public class Controller {
         flowC.addFlowElement("End","");
         printToGraphicPane();
     }
+    //-------------------------------------------------------------------------------------//
 
-    //Drawer
+    //-----------------------------------Drawer buttons------------------------------------//
+
+    public void initDrawer(){
+        drawerLabel.setText(WindowName);
+        startListeningWHDrawer();
+    }
+
     public void onCloseDrawerButtonClicked(MouseEvent event){
         //startListeningWHDrawer();
         drawer = (Stage) closeDrawerButton.getScene().getWindow();
@@ -442,4 +504,5 @@ public class Controller {
         });
 
     }
+    //-------------------------------------------------------------------------------------//
 }
