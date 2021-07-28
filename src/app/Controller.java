@@ -220,7 +220,7 @@ public class Controller {
             editorTextArea.setStyle("-fx-text-fill: red");
             System.err.println("ANTLR Error : "+ e.getMessage());
             ErrorString = e.getMessage();
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
