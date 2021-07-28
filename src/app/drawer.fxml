@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="650.0" prefWidth="500.0" style="-fx-background-color: #291452;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
+<AnchorPane prefHeight="650.0" prefWidth="420.0" style="-fx-background-color: #291452;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
    <children>
       <BorderPane blendMode="SRC_ATOP" minHeight="40.0" minWidth="40.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <bottom>
@@ -24,7 +24,7 @@
             <StackPane maxHeight="40.0" minHeight="40.0" minWidth="40.0" prefHeight="40.0" prefWidth="40.0" BorderPane.alignment="CENTER" />
          </top>
          <center>
-            <Pane fx:id="drawerPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER" />
+            <Pane fx:id="drawerPane" onScroll="#onScrollDrawerPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER" />
          </center>
          <left>
             <StackPane prefHeight="150.0" prefWidth="40.0" BorderPane.alignment="CENTER" />

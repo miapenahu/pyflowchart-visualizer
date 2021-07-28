@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.effect.Bloom;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -43,6 +44,7 @@ public class Controller {
     private FlowChart Drawerchart; // = new FlowChart();
     private String WindowName;
     private String ErrorString = "";
+    private int initH = 0;
 
     public String getErrorString() {
         return ErrorString;
@@ -88,7 +90,7 @@ public class Controller {
     @FXML private AnchorPane editorPane;
     @FXML private ImageView editorArrow;
     @FXML private ImageView builderArrow;
-    @FXML private Pane graphicPane;
+    @FXML private Pane simulatorPane;
     @FXML private ImageView closeSimulatorButton;
     //Drawer
     @FXML private Label drawerLabel;
@@ -417,21 +419,20 @@ public class Controller {
 
     private void initSimulator(){
         setButtonListener(closeSimulatorButton);
-
     }
 
-    private void printToGraphicPane(){
-        graphicPane.getChildren().clear();
-        List<Object> flowchart = flowC.getGraphic2((int)graphicPane.getWidth(),(int)graphicPane.getHeight());
+    private void printToSimulatorPane(){
+        simulatorPane.getChildren().clear();
+        List<Object> flowchart = flowC.getGraphic2((int) simulatorPane.getWidth(),initH);
         for (int cnt = 0; cnt < flowchart.size(); cnt++){
-            graphicPane.getChildren().add((Node)flowchart.get(cnt));
+            simulatorPane.getChildren().add((Node)flowchart.get(cnt));
         }
     }
 
     private void startListeningWH(){ //Listens to scene width an height after graphicPane is created (to draw the flowchart)
         Scene Gscene = (Scene) closeSimulatorButton.getScene();
         Gscene.widthProperty().addListener((obs, oldVal, newVal) -> {
-            printToGraphicPane();
+            printToSimulatorPane();
         });
 
         Gscene.heightProperty().addListener((obs, oldVal, newVal) -> {
@@ -447,20 +448,20 @@ public class Controller {
     public void onPrintButtonClicked(MouseEvent event){
         startListeningWH();
         flowC.addFlowElement("IO","Imprimir \"" + printTextField.getText() + "\"");
-        printToGraphicPane();
+        printToSimulatorPane();
     }
 
     public void onCrearVariableButtonClicked(MouseEvent event){
         startListeningWH();
         flowC.addFlowElement("Process","Crear variable \""+ crearVarField.getText() + "\"");
-        printToGraphicPane();
+        printToSimulatorPane();
 
     }
 
     public void onIfButtonClicked(MouseEvent event){
         startListeningWH();
         flowC.addFlowElement("Decision","¿"+ ifField.getText() + "?");
-        printToGraphicPane();
+        printToSimulatorPane();
         cntOpenBranches.setText(""+flowC.getOpenDecisions());
         ifTrueFalseButton.setText("true");
     }
@@ -478,7 +479,7 @@ public class Controller {
 
     public void onMergeButtonClicked(MouseEvent event){
         flowC.addFlowElement("Merge","");
-        printToGraphicPane();
+        printToSimulatorPane();
         cntOpenBranches.setText(""+flowC.getOpenDecisions());
         if(flowC.getOpenDecisions() == 0){
             ifTrueFalseButton.setText("none");
@@ -494,7 +495,7 @@ public class Controller {
     public void onWhileButtonClicked(MouseEvent event){
         startListeningWH();
         flowC.addFlowElement("Loop","¿"+ whileField.getText() + "?");
-        printToGraphicPane();
+        printToSimulatorPane();
         cntOpenWhileBlocks.setText(""+flowC.getOpenLoops());
         whileTrueFalseButton.setText("true");
     }
@@ -521,23 +522,21 @@ public class Controller {
         cntOpenBranches.setText(""+openBranches);
     }
 
-    public void onSplitsInButtonClicked(MouseEvent event){
-        /*List<Integer> test = flowC.computeSplitsToNode(Integer.parseInt(splitsInField.getText()));
-        for(int i = 0; i < test.size(); i++){
-            System.out.print(test.get(i)+", ");
-        }
-        System.out.println();
-        test = flowC.getXLayout((int)graphicPane.getWidth(),100,25);
-        for(int i = 0; i < test.size(); i++){
-            System.out.print(test.get(i)+", ");
-        }
-        System.out.println();*/
-    }
-
     public void onFinalButtonClicked(MouseEvent event){
         startListeningWH();
         flowC.addFlowElement("End","");
-        printToGraphicPane();
+        printToSimulatorPane();
+    }
+
+    public void onScrollSimulatorPane(ScrollEvent event){
+        double deltaY = event.getDeltaY();
+        if(deltaY < 0){
+            initH += 10;
+            printToSimulatorPane();
+        } else{
+            initH -= 10;
+            printToSimulatorPane();
+        }
     }
     //-------------------------------------------------------------------------------------//
 
@@ -560,7 +559,7 @@ public class Controller {
         /*if(Drawerchart == null){
             System.out.println("Drawerchart null!");
         }*/
-        List<Object> flowchart = Drawerchart.getGraphic2((int)drawerPane.getWidth(),(int)drawerPane.getHeight());
+        List<Object> flowchart = Drawerchart.getGraphic2((int)drawerPane.getWidth(),initH);
         for (int cnt = 0; cnt < flowchart.size(); cnt++){
             drawerPane.getChildren().add((Node)flowchart.get(cnt));
         }
@@ -578,6 +577,17 @@ public class Controller {
         Gscene.heightProperty().addListener((obs, oldVal, newVal) -> {
         });
 
+    }
+
+    public void onScrollDrawerPane(ScrollEvent event){
+        double deltaY = event.getDeltaY();
+        if(deltaY < 0){
+            initH += 10;
+            printToDrawerPane();
+        } else{
+            initH -= 10;
+            printToDrawerPane();
+        }
     }
     //-------------------------------------------------------------------------------------//
 

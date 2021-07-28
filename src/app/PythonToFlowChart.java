@@ -122,7 +122,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
         System.out.println("10 Entrada al IF: "+ ctx.getText());
         String[] parts = ctx.getText().split(":");
         String ans = parts[0].substring(2,parts[0].length());
-        addFlowElemContext("Decision","Si " + ans);
+        addFlowElemContext("Decision",ans);
         //flowC.setWritingBranch(1); //True
     }
 
@@ -134,12 +134,16 @@ public class PythonToFlowChart extends PythonParserBaseListener {
 
 
     @Override public void enterWhile_stmt(PythonParser.While_stmtContext ctx) {
-        System.out.println("12");
+        System.out.println("12 Entrada ciclo while:"+ctx.getText());
+        String str = "Mientras " + ctx.test().getText();
+        addFlowElemContext("Loop",str);
+
     }
 
 
     @Override public void exitWhile_stmt(PythonParser.While_stmtContext ctx) {
-        System.out.println("13");
+        System.out.println("13 Salida ciclo while:"+ctx.getText());
+        addFlowElemContext("EndLoop","");
     }
 
 
@@ -386,10 +390,18 @@ public class PythonToFlowChart extends PythonParserBaseListener {
 
     @Override public void enterExpr_stmt(PythonParser.Expr_stmtContext ctx) {
         System.out.println("54 Entrada declaración expresión: " + ctx.getText());
-        if(ctx.getText().contains("print")){
+
+
+         if(ctx.getText().contains("print")){
             addFlowElemContext("IO", ctx.getText());
         } else if(ctx.getText().contains("=")){
-            addFlowElemContext("Process", ctx.getText());
+             if(ctx.getText().contains("input")){
+                 addFlowElemContext("IO", "Ingresar "+ctx.getText().substring(0,ctx.getText().indexOf("=")));
+             } else {
+                 addFlowElemContext("Process", ctx.getText());
+             }
+        } else if(ctx.getText().contains("()")){
+            addFlowElemContext("KeyProcess","Llamar a "+ctx.getText());
         }
     }
 

@@ -194,6 +194,7 @@ public class FlowChart {
                     temp = temp + splitted[parts] + " ";
                 }
                 Text processText2 = new Text(temp);
+                processText2.setBlendMode(BlendMode.SRC_ATOP);
                 processText2.setFont(Font.font("Verdana",fontSize));
                 processText2.setX((actualX - (processText2.getLayoutBounds().getWidth()/2)));
                 processText2.setY(actualY + (maxh*2)/3 + processText2.getLayoutBounds().getHeight()/4);
@@ -731,9 +732,9 @@ public class FlowChart {
         return ans;
     }
 
-    public List<Object> getGraphic2(int w, int h){
+    public List<Object> getGraphic2(int w, int initH){
         computeSplits2();
-        int actualY = 0, actualX, widthObj = 150, heightObj = 50, YSpaceObj = 25, XSpaceObj = 25;
+        int actualY = initH, actualX, widthObj = 150, heightObj = 50, YSpaceObj = 25, XSpaceObj = 25;
         int fontSize = 20, actualXlay = -1, initXlay = -1, spc = XSpaceObj + widthObj;
         List<Integer> parentDecision = new ArrayList<>();
         int actualYmax = 0;
@@ -751,7 +752,7 @@ public class FlowChart {
         }
         widthObj = 120;
         ylay[xlay.size()+1] = YSpaceObj;
-        actualY = ylay[xlay.size()+1];
+        actualY += ylay[xlay.size()+1];
         Ellipse start = new Ellipse(actualX,actualY + heightObj/2,widthObj/2,heightObj/2);
         start.setStroke(Color.BLACK);
         start.setFill(Color.LIGHTGREEN);
