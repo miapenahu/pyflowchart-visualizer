@@ -39,8 +39,18 @@ public class Controller {
     private FlowChart flowC = new FlowChart();
     private List<FlowChart> FCList = new ArrayList<>();
     private List<String> FCnames = new ArrayList<>();
+    private List<Stage> drawerChilds = new ArrayList<>();
     private FlowChart Drawerchart; // = new FlowChart();
     private String WindowName;
+    private String ErrorString = "";
+
+    public String getErrorString() {
+        return ErrorString;
+    }
+
+    public void setErrorString(String errorString) {
+        ErrorString = errorString;
+    }
 
     public String getWindowName() {
         return WindowName;
@@ -53,6 +63,7 @@ public class Controller {
     private Stage stage;
     private Stage simulator;
     private Stage drawer;
+    private Stage error = new Stage();;
     private Scene scene;
     private Parent root;
 
@@ -71,6 +82,7 @@ public class Controller {
     @FXML private ImageView loadButton;
     @FXML private ImageView saveButton;
     @FXML private ImageView drawButton;
+    @FXML private ImageView closeChildrenButton;
     @FXML private ImageView debugButton;
     //graphics.fxml
     @FXML private AnchorPane editorPane;
@@ -93,22 +105,14 @@ public class Controller {
     @FXML private Button endBlockButton;
     @FXML private TextField cntOpenWhileBlocks;
     @FXML private TextField splitsInField;
-    //@FXML private TextView ivtext;
+    //error.fxml
+    @FXML private ImageView closeErrorButton;
+    @FXML private TextArea errorTextArea;
 
     public void initialize(){
-        /*editorTextArea.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
-                // this will run whenever text is changed
-                //System.out.println("Testing listener");
-                test();
-            }
-        });*/
-
         initEditor();
         initSimulator();
-
-        if(editorTextArea != null) {
+        if(editorTextArea != null) { //If is initializing editor
             PauseTransition pause = new PauseTransition(Duration.seconds(1));
             editorTextArea.textProperty().addListener(
                     (observable, oldValue, newValue) -> {
@@ -116,15 +120,24 @@ public class Controller {
                         pause.playFromStart();
                     });
         }
-        if(drawerPane != null){
+        if(drawerPane != null){ //If is initializing drawer
             PauseTransition pause = new PauseTransition(Duration.seconds(1));
             drawerPane.widthProperty().addListener(
                     (observable, oldValue, newValue) -> {
                         pause.setOnFinished(event -> initDrawer());//doSomething(newValue));
                         pause.playFromStart();
                     });
-
         }
+
+        if(errorTextArea != null) { //If is initializing drawer
+            PauseTransition pause = new PauseTransition(Duration.seconds(1));
+            errorTextArea.widthProperty().addListener(
+                    (observable, oldValue, newValue) -> {
+                        pause.setOnFinished(event -> initError());//doSomething(newValue));
+                        pause.playFromStart();
+                    });
+        }
+
     }
 
     public void setButtonListener(ImageView button){
@@ -188,8 +201,8 @@ public class Controller {
                 FCnames.add(elem);
                 System.out.println("FCname: "+ elem);
             }
-            System.out.println("FCList size: "+FCList.size());
-            System.out.println("FCnames size: "+FCList.size());
+            //System.out.println("FCList size: "+FCList.size());
+            //System.out.println("FCnames size: "+FCList.size());
             Drawerchart = new FlowChart(pyflow.getDrawerChart());
             /*if(Drawerchart == null){
                 System.out.println("Drawchart is null!");
@@ -199,11 +212,13 @@ public class Controller {
             //printToDrawerPane(pyflow.drawerChart);
            // System.out.println("Good code!"); // print a \n after translation
             editorTextArea.setStyle("-fx-text-fill: green");
+            ErrorString = "";
         } catch (Exception e){
             //System.out.println("Bad code :(");
             editorTextArea.setStyle("-fx-text-fill: red");
-            System.err.println("Error (Test): "); //+ e);
-            e.printStackTrace();
+            System.err.println("ANTLR Error : "+ e.getMessage());
+            ErrorString = e.getMessage();
+            //e.printStackTrace();
         }
     }
 
@@ -214,16 +229,16 @@ public class Controller {
         setButtonListener(loadButton);
         setButtonListener(saveButton);
         setButtonListener(drawButton);
+        setButtonListener(closeChildrenButton);
         setButtonListener(debugButton);
     }
 
-    public void switchToMenu(MouseEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("menu.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        scene.setFill(Color.TRANSPARENT);
-        stage.setScene(scene);
-        stage.show();
+    public void onCloseChildrenButtonClicked(MouseEvent event) throws IOException{
+        for(Stage elem : drawerChilds){
+            drawer = elem;
+            drawer.close();
+        }
+        drawerChilds = new ArrayList<>();
     }
 
     public void switchToEditor(MouseEvent event) throws IOException{
@@ -350,7 +365,7 @@ public class Controller {
         }
     }
 
-    public void onGraficarButtonClicked(MouseEvent event) throws IOException{
+    public void onDrawButtonClicked(MouseEvent event) throws IOException{
         //root = FXMLLoader.load(getClass().getResource("drawer.fxml"));
         //for(FlowChart elem : FCList){
         for(int elem = 0; elem < FCList.size();elem++){
@@ -368,8 +383,28 @@ public class Controller {
             drawer.setScene(scene);
             ResizeHelper.addResizeListener(drawer);
             drawer.show();
+            drawer.setX(100 + 50*elem);
+            drawer.setY(100 + 50*elem);
+            drawerChilds.add(drawer);
         }
 
+    }
+
+    public void onDebugButtonClicked(MouseEvent event) throws IOException{
+        error.close();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("error.fxml"));
+        //stage.initStyle(StageStyle.TRANSPARENT);
+        root = loader.load();
+        error = new Stage();
+        error.initStyle(StageStyle.TRANSPARENT);
+        //stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        Controller controller = loader.getController();
+        controller.setErrorString(ErrorString);
+        scene.setFill(Color.TRANSPARENT);
+        error.setScene(scene);
+        ResizeHelper.addResizeListener(error);
+        error.show();
     }
 
     public void onExitButtonClicked(MouseEvent event){
@@ -382,6 +417,7 @@ public class Controller {
 
     private void initSimulator(){
         setButtonListener(closeSimulatorButton);
+
     }
 
     private void printToGraphicPane(){
@@ -543,5 +579,19 @@ public class Controller {
         });
 
     }
+    //-------------------------------------------------------------------------------------//
+
+    //----------------------------------Error-----------------------------------------------//
+
+    public void initError(){
+        setButtonListener(closeErrorButton);
+        errorTextArea.setText(ErrorString);
+    }
+
+    public void onCloseErrorButtonClicked(MouseEvent event){
+        error = (Stage) closeErrorButton.getScene().getWindow();
+        error.close();
+    }
+
     //-------------------------------------------------------------------------------------//
 }

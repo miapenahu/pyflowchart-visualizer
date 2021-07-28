@@ -2,40 +2,44 @@
 
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.effect.Bloom?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="650.0" prefWidth="500.0" style="-fx-background-color: #291452;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
+<AnchorPane prefHeight="130.0" prefWidth="750.0" style="-fx-background-color: #291452;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
    <children>
       <BorderPane blendMode="SRC_ATOP" minHeight="40.0" minWidth="40.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <bottom>
-            <StackPane blendMode="SRC_ATOP" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            <StackPane blendMode="SRC_ATOP" maxHeight="15.0" minHeight="0.0" prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
          </bottom>
          <right>
-            <StackPane blendMode="SRC_ATOP" maxWidth="40.0" minWidth="40.0" prefHeight="150.0" prefWidth="40.0" BorderPane.alignment="CENTER" />
+            <StackPane blendMode="SRC_ATOP" maxWidth="15.0" minWidth="15.0" prefHeight="150.0" prefWidth="40.0" BorderPane.alignment="CENTER" />
          </right>
          <top>
             <StackPane maxHeight="40.0" minHeight="40.0" minWidth="40.0" prefHeight="40.0" prefWidth="40.0" BorderPane.alignment="CENTER" />
          </top>
-         <center>
-            <Pane fx:id="drawerPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER" />
-         </center>
          <left>
-            <StackPane prefHeight="150.0" prefWidth="40.0" BorderPane.alignment="CENTER" />
+            <StackPane prefHeight="150.0" prefWidth="15.0" BorderPane.alignment="CENTER" />
          </left>
+         <center>
+            <TextArea fx:id="errorTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" style="-fx-text-fill: red;" BorderPane.alignment="CENTER">
+               <font>
+                  <Font name="Courier New Bold" size="18.0" />
+               </font>
+            </TextArea>
+         </center>
       </BorderPane>
-      <Label fx:id="drawerLabel" layoutX="40.0" layoutY="10.0" text="Drawer" textFill="WHITE">
+      <Label layoutX="40.0" layoutY="10.0" text="Error Log" textFill="WHITE">
          <font>
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <ImageView fx:id="closeDrawerButton" blendMode="RED" fitHeight="25.0" fitWidth="200.0" layoutX="100.0" onMouseClicked="#onCloseDrawerButtonClicked" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="8.0">
+      <ImageView fx:id="closeErrorButton" blendMode="RED" fitHeight="25.0" fitWidth="200.0" layoutX="100.0" onMouseClicked="#onCloseErrorButtonClicked" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="8.0">
          <image>
             <Image url="@images/icons8_shutdown_32px_1.png" />
          </image>

@@ -148,7 +148,7 @@
                      </effect>
                   </ImageView>
 
-                  <ImageView fx:id="drawButton" fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onGraficarButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="195.0">
+                  <ImageView fx:id="drawButton" fitHeight="35.0" fitWidth="200.0" onMouseClicked="#onDrawButtonClicked" pickOnBounds="true" preserveRatio="true" translateX="195.0">
                      <image>
                         <Image url="@images/icons8_project_diagram_32px_1.png" />
                      </image>
@@ -164,10 +164,21 @@
                   </ImageView>
                </children>
             </HBox>
-            <ImageView fx:id="debugButton" fitHeight="33.0" fitWidth="33.0" layoutX="720.0" layoutY="695.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="debugButton" fitHeight="33.0" fitWidth="33.0" layoutX="720.0" layoutY="695.0" onMouseClicked="#onDebugButtonClicked" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="7.0">
                <image>
                   <Image url="@images/bug.png" />
                </image>
+            </ImageView>
+            <ImageView fx:id="closeChildrenButton" blendMode="RED" cache="true" fitHeight="25.0" fitWidth="25.0" layoutX="301.0" layoutY="61.0" onMouseClicked="#onCloseChildrenButtonClicked" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/close-childs.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <effect>
+                  <Blend />
+               </effect>
             </ImageView>
          </children>
       </AnchorPane>
