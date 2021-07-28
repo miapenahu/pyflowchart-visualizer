@@ -17,6 +17,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
     boolean insideFunction = false;
     boolean insideClass = false;
     String nameClass = "";
+    List<Integer> openBranchesTemp = new ArrayList<>();
 
     public List<String> getFCnames() {
         return FCnames;
@@ -59,6 +60,22 @@ public class PythonToFlowChart extends PythonParserBaseListener {
             classChart.setWritingBranch(num);
         } else {
             drawerChart.setWritingBranch(num);
+        }
+    }
+
+    public int getOpenBranchesContext(){
+        if(insideFunction) {
+            return functionChart.getOpenDecisions();
+        } else if(insideClass){
+            return classChart.getOpenDecisions();
+        } else {
+            return drawerChart.getOpenDecisions();
+        }
+    }
+
+    public void addMergeRecursive(){
+        while(getOpenBranchesContext() > openBranchesTemp.get(openBranchesTemp.size() - 1)){
+            addFlowElemContext("Merge","");
         }
     }
 
@@ -122,6 +139,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
         System.out.println("10 Entrada al IF: "+ ctx.getText());
         String[] parts = ctx.getText().split(":");
         String ans = parts[0].substring(2,parts[0].length());
+        openBranchesTemp.add(getOpenBranchesContext());
         addFlowElemContext("Decision",ans);
         //flowC.setWritingBranch(1); //True
     }
@@ -129,7 +147,9 @@ public class PythonToFlowChart extends PythonParserBaseListener {
 
     @Override public void exitIf_stmt(PythonParser.If_stmtContext ctx) {
         System.out.println("11 Salida del IF");
-        addFlowElemContext("Merge","");
+        //addFlowElemContext("Merge","");
+        addMergeRecursive();
+        openBranchesTemp.remove(openBranchesTemp.size()-1);
     }
 
 
@@ -248,6 +268,9 @@ public class PythonToFlowChart extends PythonParserBaseListener {
 
     @Override public void enterElif_clause(PythonParser.Elif_clauseContext ctx) {
         System.out.println("26 Entrada ELIF");
+        setWritingBranchContext(0); //False
+        addFlowElemContext("KeyDecision",ctx.test().getText());
+
     }
 
 
@@ -396,7 +419,7 @@ public class PythonToFlowChart extends PythonParserBaseListener {
             addFlowElemContext("IO", ctx.getText());
         } else if(ctx.getText().contains("=")){
              if(ctx.getText().contains("input")){
-                 addFlowElemContext("IO", "Ingresar "+ctx.getText().substring(0,ctx.getText().indexOf("=")));
+                 addFlowElemContext("KeyIO", "Ingresar "+ctx.getText().substring(0,ctx.getText().indexOf("=")));
              } else {
                  addFlowElemContext("Process", ctx.getText());
              }
@@ -483,7 +506,13 @@ public class PythonToFlowChart extends PythonParserBaseListener {
 
 
     @Override public void enterYield_stmt(PythonParser.Yield_stmtContext ctx) {
-        System.out.println("70");
+        System.out.println("70 Entrada yield");
+        if(ctx.yield_expr().yield_arg() != null){
+            addFlowElemContext("KeyProcess","Yield (ceder) "+ctx.yield_expr().yield_arg().getText());
+        } else {
+            addFlowElemContext("KeyProcess","Yield (ceder)");
+        }
+
     }
 
 
@@ -493,7 +522,8 @@ public class PythonToFlowChart extends PythonParserBaseListener {
 
 
     @Override public void enterImport_stmt(PythonParser.Import_stmtContext ctx) {
-        System.out.println("72");
+        System.out.println("72 Entrada import");
+        addFlowElemContext("KeyProcess","Importar "+ctx.dotted_as_names().getText());
     }
 
 
@@ -503,7 +533,19 @@ public class PythonToFlowChart extends PythonParserBaseListener {
 
 
     @Override public void enterFrom_stmt(PythonParser.From_stmtContext ctx) {
-        System.out.println("74");
+        System.out.println("74 Entrada from");
+        String str = "Desde "+ctx.dotted_name().getText() + " importar ";
+        //ctx.children.indexOf(ctx.IMPORT().getText())
+        boolean openFlag = false;
+        for(int i = 0;i < ctx.children.size();i++){
+            if(openFlag){
+                str += ctx.getChild(i).getText();
+            }
+            if(ctx.getChild(i).getText().contains("import")){
+                openFlag = true;
+            }
+        }
+        addFlowElemContext("KeyProcess",str);
     }
 
 
